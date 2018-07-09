@@ -1,0 +1,1766 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!-- saved from url=(0056)http://blog.csdn.net/s1234567_89/article/details/7852392 -->
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">  
+
+    <script src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/hm.js"></script><script type="text/javascript" src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/tracking.js" charset="utf-8"></script>  
+
+    <script type="text/javascript">
+        var protocol = window.location.protocol;
+        document.write('<script type="text/javascript" src="' + protocol + '//csdnimg.cn/pubfooter/js/repoAddr2.js?v=' + Math.random() + '"></' + 'script>');
+    </script><script type="text/javascript" src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/repoAddr2.js"></script>
+
+  
+ <meta http-equiv="Cache-Control" content="no-siteapp"><link rel="alternate" media="handheld" href="http://blog.csdn.net/s1234567_89/article/details/7852392#">
+
+    <title>linux下gdb单步调试 - zhuangshu_feng'‘每天进步一点点
+        - 博客频道 - CSDN.NET</title>
+    
+    <meta name="description" content="现在磁力种子搜索引擎质量参差不齐，现在就重点整理几个常用的种子搜索站，做个对比分析1.屌丝搜-最懂屌丝的搜索引擎（www.diaosisou.com）号称最懂屌丝的BT搜索引擎，确实名副其实，屌丝搜索功能强大。其种子资源强大丰富而又有简介的界面风格，无广告弹窗，支持在线云点播，总体来说，屌丝搜确实是良心站点。该磁力站在短时间内获得了极高的人气，在国内有着良好的口碑，被称为种子搜索神器网页版">
+    <script src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/jquery.js" type="text/javascript"></script>
+      <script type="text/javascript" src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/jquery-version.js"></script>
+    <script type="text/javascript" src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/ad.js"></script>
+        <!--new top-->
+       
+        <link rel="stylesheet" href="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/index.css">
+        <!--new top-->
+    
+      <!-- ad begin -->
+         <script language="javascript" type="text/javascript" src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/tracking(1).js"></script>
+    <!-- ad end-->
+
+    <link rel="Stylesheet" type="text/css" href="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/style.css">
+    <link id="RSSLink" title="RSS" type="application/rss+xml" rel="alternate" href="http://blog.csdn.net/S1234567_89/rss/list">
+    <link rel="shortcut icon" href="http://c.csdnimg.cn/public/favicon.ico">
+    <link type="text/css" rel="stylesheet" href="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/default.css">
+ 
+
+
+<script>
+    var _hmt = _hmt || [];
+    (function () {
+        var hm = document.createElement("script");
+        hm.src = "//hm.baidu.com/hm.js?6bcd52f51e9b3dce32bec4a3997715ac";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+<script src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/share.js"></script><link rel="stylesheet" type="text/css" href="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/job_reco.css"><style type="text/css">.MathJax_Hover_Frame {border-radius: .25em; -webkit-border-radius: .25em; -moz-border-radius: .25em; -khtml-border-radius: .25em; box-shadow: 0px 0px 15px #83A; -webkit-box-shadow: 0px 0px 15px #83A; -moz-box-shadow: 0px 0px 15px #83A; -khtml-box-shadow: 0px 0px 15px #83A; border: 1px solid #A6D ! important; display: inline-block; position: absolute}
+.MathJax_Hover_Arrow {position: absolute; width: 15px; height: 11px; cursor: pointer}
+</style><style type="text/css">#MathJax_About {position: fixed; left: 50%; width: auto; text-align: center; border: 3px outset; padding: 1em 2em; background-color: #DDDDDD; color: black; cursor: default; font-family: message-box; font-size: 120%; font-style: normal; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; border-radius: 15px; -webkit-border-radius: 15px; -moz-border-radius: 15px; -khtml-border-radius: 15px; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+.MathJax_Menu {position: absolute; background-color: white; color: black; width: auto; padding: 5px 0px; border: 1px solid #CCCCCC; margin: 0; cursor: default; font: menu; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; border-radius: 5px; -webkit-border-radius: 5px; -moz-border-radius: 5px; -khtml-border-radius: 5px; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+.MathJax_MenuItem {padding: 1px 2em; background: transparent}
+.MathJax_MenuArrow {position: absolute; right: .5em; color: #666666}
+.MathJax_MenuActive .MathJax_MenuArrow {color: white}
+.MathJax_MenuArrow.RTL {left: .5em; right: auto}
+.MathJax_MenuCheck {position: absolute; left: .7em}
+.MathJax_MenuCheck.RTL {right: .7em; left: auto}
+.MathJax_MenuRadioCheck {position: absolute; left: .7em}
+.MathJax_MenuRadioCheck.RTL {right: .7em; left: auto}
+.MathJax_MenuLabel {padding: 1px 2em 3px 1.33em; font-style: italic}
+.MathJax_MenuRule {border-top: 1px solid #DDDDDD; margin: 4px 3px}
+.MathJax_MenuDisabled {color: GrayText}
+.MathJax_MenuActive {background-color: #606872; color: white}
+.MathJax_Menu_Close {position: absolute; width: 31px; height: 31px; top: -15px; left: -15px}
+</style><style type="text/css">#MathJax_Zoom {position: absolute; background-color: #F0F0F0; overflow: auto; display: block; z-index: 301; padding: .5em; border: 1px solid black; margin: 0; font-weight: normal; font-style: normal; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; box-shadow: 5px 5px 15px #AAAAAA; -webkit-box-shadow: 5px 5px 15px #AAAAAA; -moz-box-shadow: 5px 5px 15px #AAAAAA; -khtml-box-shadow: 5px 5px 15px #AAAAAA; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_ZoomOverlay {position: absolute; left: 0; top: 0; z-index: 300; display: inline-block; width: 100%; height: 100%; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+#MathJax_ZoomFrame {position: relative; display: inline-block; height: 0; width: 0}
+#MathJax_ZoomEventTrap {position: absolute; left: 0; top: 0; z-index: 302; display: inline-block; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+</style><style type="text/css">.MathJax_Preview {color: #888}
+#MathJax_Message {position: fixed; left: 1em; bottom: 1.5em; background-color: #E6E6E6; border: 1px solid #959595; margin: 0px; padding: 2px 8px; z-index: 102; color: black; font-size: 80%; width: auto; white-space: nowrap}
+#MathJax_MSIE_Frame {position: absolute; top: 0; left: 0; width: 0px; z-index: 101; border: 0px; margin: 0px; padding: 0px}
+.MathJax_Error {color: #CC0000; font-style: italic}
+</style><link href="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/bdsstyle.css" rel="stylesheet" type="text/css"><script src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/wxLogin.js"></script><link rel="stylesheet" type="text/css" href="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/style(1).css"><link type="text/css" rel="stylesheet" href="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/style(2).css"><script src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/logger.js"></script><script src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/get_ads.php" type="text/javascript"></script><link rel="stylesheet" href="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/share_style0_16.css"><script src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/19051313.js" type="text/javascript"></script><script src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/19051313.js" type="text/javascript"></script><script src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/19051313.js" type="text/javascript"></script></head>
+<body><div id="BAIDU_DUP_fp_wrapper" style="position: absolute; left: -1px; bottom: -1px; z-index: 0; width: 0px; height: 0px; overflow: hidden; visibility: hidden; display: none;"><iframe id="BAIDU_DUP_fp_iframe" src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/o.html" style="width: 0px; height: 0px; visibility: hidden; display: none;"></iframe></div><iframe frameborder="0" style="display: none;"></iframe><div id="MathJax_Message" style="display: none;"></div>
+
+
+    <!-- 广告位开始 -->
+        <ins data-revive-zoneid="149" data-revive-id="8c38e720de1c90a6f6ff52f3f89c4d57" id="revive-0-0"></ins>
+    <!-- 广告位结束 -->
+
+    
+   
+      <!--new top-->
+    <script id="toolbar-tpl-scriptId" fixed="true" prod="blog" skin="black" src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/html.js" type="text/javascript"></script><div class="csdn-toolbar csdn-toolbar-skin-black ">        <div class="container row center-block ">          <div class="col-md-3 pull-left logo clearfix"><a href="http://www.csdn.net/?ref=toolbar" title="CSDN首页" target="_blank" class="icon"></a><a title="频道首页" href="http://blog.csdn.net/?ref=toolbar_logo" class="img blog-icon"></a></div>          <div class="pull-right login-wrap unlogin">            <ul class="btns">              <li class="loginlink"><a href="https://passport.csdn.net/account/login?ref=toolbar" target="_top">登录&nbsp;</a>|<a target="_top" href="http://passport.csdn.net/account/mobileregister?ref=toolbar&amp;action=mobileRegister">&nbsp;注册</a></li>              <li class="search">                <div class="icon on-search-icon">                  <div class="wrap">                    <div class="curr-icon-wrap">                      <div class="curr-icon"></div>                    </div>                    <form action="http://so.csdn.net/search" method="get" target="_blank">                      <input type="hidden" value="toolbar" name="ref" accesskey="2">                      <div class="border">                        <input placeholder="搜索" type="text" value="" name="q" accesskey="2"><span class="icon-enter-sm"></span>                      </div>                    </form>                  </div>                </div>              </li>              <li class="favor">                <div class="icon on-favor-icon">                  <div class="wrap">                    <div class="curr-icon-wrap">                      <div class="curr-icon"></div>                    </div>                    <div style="display:none;" class="favor-success"><span class="msg">收藏成功</span>                      <div class="btns"><span class="btn btn-primary ok">确定</span></div>                    </div>                    <div style="display:none;" class="favor-failed"><span class="icon-danger-lg"></span><span class="msg">收藏失败，请重新收藏</span>                      <div class="btns"><span class="btn btn-primary ok">确定</span></div>                    </div>                    <form role="form" class="form-horizontal favor-form">                      <div class="form-group">                        <div class="clearfix">                          <label for="input-title" class="col-sm-2 control-label">标题</label>                          <div class="col-sm-10">                            <input id="inputTitle" type="text" placeholder="" class="title form-control">                          </div>                        </div>                        <div class="alert alert-danger"><strong></strong>标题不能为空</div>                      </div>                      <div class="form-group">                        <label for="input-url" class="col-sm-2 control-label">网址</label>                        <div class="col-sm-10">                          <input id="input-url" type="text" placeholder="" class="url form-control">                        </div>                      </div>                      <div class="form-group">                        <label for="input-tag" class="col-sm-2 tag control-label">标签</label>                        <div class="col-sm-10">                          <input id="input-tag" type="text" class="form-control tag">                        </div>                      </div>                      <div class="form-group">                        <label for="input-description" class="description col-sm-2 control-label">摘要</label>                        <div class="col-sm-10">                          <textarea id="input-description" class="form-control description"></textarea>                        </div>                      </div>                      <div class="form-group">                        <div class="col-sm-offset-2 col-sm-10 ft">                          <div class="col-sm-4 pull-left">                            <div class="checkbox">                              <label>                                <input type="checkbox" name="share" checked="checked" class="share">公开                              </label>                            </div>                          </div>                          <div class="col-sm-8 pull-right favor-btns">                            <button type="button" class="cancel btn btn-default">取消</button>                            <button type="submit" class="submit btn btn-primary">收藏</button>                          </div>                        </div>                      </div>                    </form>                  </div>                </div>              </li>              <li class="notify">                <div style="display:none" class="number"></div>                <div style="display:none" class="icon-hasnotes-sm"></div>                <div id="header_notice_num"></div>                <div class="icon on-notify-icon">                  <div class="wrap">                    <div class="curr-icon-wrap">                      <div class="curr-icon"></div>                    </div>                    <div id="note1" class="csdn_note">                      <div class="box"></div>                    <iframe src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/saved_resource.html" frameborder="0" allowtransparency="true" style="z-index:-1;position:absolute;top:0;left:0;width:100%;height:100%;background:transparent"></iframe></div>                  </div>                </div>              </li>              <li class="ugc">                <div class="icon on-ugc-icon">                  <div class="wrap clearfix">                    <div class="curr-icon-wrap">                      <div class="curr-icon"></div>                    </div>                    <dl>                      <dt><a href="http://geek.csdn.net/news/expert?ref=toolbar" target="_blank" class="p-news clearfix" style="display:none;"><em class="icon"></em><span>分享资讯</span></a></dt>                      <dt style="border: none;"><a href="http://u.download.csdn.net/upload?ref=toolbar" target="_blank" class="p-doc clearfix"><em class="icon"></em><span>传PPT/文档</span></a></dt>                      <dt><a href="http://bbs.csdn.net/topics/new?ref=toolbar" target="_blank" class="p-ask clearfix"><em class="icon"></em><span>提问题</span></a></dt>                      <dt><a href="http://write.blog.csdn.net/postedit?ref=toolbar" target="_blank" class="p-blog clearfix"><em class="icon"></em><span>写博客</span></a></dt>                      <dt><a href="http://u.download.csdn.net/upload?ref=toolbar" target="_blank" class="p-src clearfix"><em class="icon"></em><span>传资源</span></a></dt>                      <dt><a href="https://code.csdn.net/projects/new?ref=toolbar" target="_blank" class="c-obj clearfix"><em class="icon"></em><span>创建项目</span></a></dt>                      <dt><a href="https://code.csdn.net/snippets/new?ref=toolbar" target="_blank" class="c-code clearfix"><em class="icon"></em><span>创建代码片</span></a></dt>                    </dl>                  </div>                </div>              </li>              <li class="profile">                <div class="icon on-profile-icon"><img src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/100x100.jpg" class="curr-icon-img">                  <div class="wrap clearfix">                    <div class="curr-icon-wrap">                      <div class="curr-icon"></div>                    </div>                    <div class="bd">                      <dl class="clearfix">                        <dt class="pull-left img"><a target="_blank" href="http://my.csdn.net/?ref=toolbar" class="avatar"><img src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/100x100.jpg"></a></dt>                        <dd class="info" style="border: none;"><a target="_blank" href="http://my.csdn.net/?ref=toolbar" class="nickname"></a><a class="set-nick" href="https://passport.csdn.net/account/profile">设置昵称<span class="write-icon"></span></a><span class="dec"><a class="fill-dec" href="http://my.csdn.net/" target="_blank">编辑自我介绍，让更多人了解你<span class="write-icon"></span></a></span></dd>                      </dl>                    </div>                    <div class="ft clearfix"><a target="_blank" href="http://my.csdn.net/my/account/changepwd?ref=toolbar" class="pull-left"><span class="icon-cog"></span>帐号设置</a><a href="https://passport.csdn.net/account/logout?ref=toolbar" target="_top" class="pull-left" style="margin-left:132px; width:18px; height:27px; white-space:nowrap; overflow:hidden;"><span class="icon-signout"></span><span class="out">退出</span></a></div>                  </div>                </div>              </li>              <li class="apps">                <div id="chasnew123" class="hasnew" style="display: none;"></div>                <div id="cappsarea123" class="icon on-apps-icon">                  <div class="wrap clearfix">                    <div class="curr-icon-wrap">                      <div class="curr-icon"></div>                    </div>                  <div class="detail">                    <dl>                      <dt>                        <h5>社区</h5>                      </dt>                      <dd> <a href="http://blog.csdn.net/?ref=toolbar" target="_blank">博客</a></dd>                      <dd> <a href="http://bbs.csdn.net/?ref=toolbar" target="_blank">论坛</a></dd>                      <dd> <a href="http://download.csdn.net/?ref=toolbar" target="_blank">下载</a></dd>                      <dd> <a href="http://lib.csdn.net/?ref=toolbar" target="_blank">知识库</a></dd>                      <dd><a href="http://ask.csdn.net/?ref=toolbar" target="_blank">技术问答</a></dd>                      <dd><a href="http://geek.csdn.net/?ref=toolbar" target="_blank">极客头条</a></dd>                      <dd style="display:none"> <a href="http://hero.csdn.net/?ref=toolbar" target="_blank">英雄会</a></dd>                    </dl>                  </div>                  <div class="detail">                    <dl>                      <dt>                        <h5>服务</h5>                      </dt>                      <dd style="display:none"> <a href="http://job.csdn.net/?ref=toolbar" target="_blank">JOB<img src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/new.gif" style="display: none; margin-top: -26px; width: 23px;"></a></dd>                      <dd> <a href="http://edu.csdn.net/?ref=toolbar" target="_blank">学院<img src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/new.gif" style="display: none; margin-top: -26px; width: 23px;"></a></dd>                      <dd> <a href="https://code.csdn.net/?ref=toolbar" target="_blank">CODE</a></dd>                      <dd> <a href="http://huiyi.csdn.net/?ref=toolbar" target="_blank">活动</a></dd>                      <dd> <a href="http://www.csto.com/?ref=toolbar" target="_blank">CSTO</a></dd>                      <dd> <a href="http://mall.csdn.net/?ref=toolbar" target="_blank">C币兑换<img src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/new.gif" style="display: none; margin-top: -26px; width: 23px;"></a></dd>                    </dl>                  </div>                  <div class="detail last">                    <dl>                      <dt>                        <h5>俱乐部</h5>                      </dt>                      <dd> <a href="http://cto.csdn.net/?ref=toolbar" target="_blank">CTO俱乐部</a></dd>                      <dd> <a href="http://student.csdn.net/?ref=toolbar" target="_blank">高校俱乐部</a></dd>                    </dl>                  </div>                </div>              </div>            </li>            </ul>          </div>        </div>    </div>
+     <!--new top-->
+    <div id="container">
+        <div id="header">
+    <div class="header">
+        <div id="blog_title">
+            <h2>
+                <a href="http://blog.csdn.net/s1234567_89">zhuangshu_feng'‘每天进步一点点</a></h2>
+            <h3></h3>
+            <div class="clear">
+            </div>
+        </div>
+        <div class="clear">
+        </div>
+        
+     
+    </div>
+</div>
+<div id="navigator">
+    <div class="navigator_bg">
+    </div>
+    <div class="navigator">
+        <ul>           
+                <li id="btnContents"><a href="http://blog.csdn.net/s1234567_89?viewmode=contents"><span onclick="_gaq.push([&#39;_trackEvent&#39;,&#39;function&#39;, &#39;onclick&#39;, &#39;blog_articles_mulu&#39;])">
+                    <img src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/ico_list.gif">目录视图</span></a></li>
+                <li id="btnView"><a href="http://blog.csdn.net/s1234567_89?viewmode=list"><span onclick="_gaq.push([&#39;_trackEvent&#39;,&#39;function&#39;, &#39;onclick&#39;, &#39;blog_articles_zhaiyao&#39;])">
+                    <img src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/ico_summary.gif">摘要视图</span></a></li>
+                <li id="btnRss"><a href="http://blog.csdn.net/s1234567_89/rss/list"><span onclick="_gaq.push([&#39;_trackEvent&#39;,&#39;function&#39;, &#39;onclick&#39;, &#39;blog_articles_RSS&#39;])">
+                    <img src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/ico_rss.gif">订阅</span></a></li>                
+            
+
+            </ul>
+    </div>
+</div>
+<script type="text/javascript">
+    var username = "S1234567_89";
+    var _blogger = username;
+    var blog_address = "http://blog.csdn.net/s1234567_89";
+    var static_host = "http://static.blog.csdn.net";
+    var currentUserName = "";  
+</script>
+
+        <div id="body">
+            <div id="main">
+                <div class="main">
+                        <div class="ad_class">
+<div class="notice tracking-ad" data-mod="popu_3"> 
+
+
+<a href="http://geek.csdn.net/news/detail/134790" target="_blank">
+<font color="blue">CSDN学院招募微信小程序讲师啦
+
+
+</font></a>
+
+&nbsp;&nbsp;&nbsp;&nbsp;
+
+<a href="http://edu.csdn.net/huiyiCourse/detail/274" target="_blank">
+<font color="red">程序员简历优化指南！ 
+</font></a>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+<a href="http://blog.csdn.net/PK.html" target="_blank">
+<font color="blue">【观点】移动原生App开发 PK HTML 5开发
+</font></a>
+
+&nbsp;&nbsp;&nbsp;
+
+<a href="http://bss.csdn.net/m/product/aliyun_essay/index" target="_blank">
+<font color="red">云端应用征文大赛，秀绝招，赢无人机！
+</font></a>
+
+
+</div>                        </div>
+                        
+
+
+
+  
+<link href="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/comment1.css" type="text/css" rel="stylesheet">
+<link href="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/style1.css" type="text/css" rel="stylesheet">
+<script language="JavaScript" type="text/javascript" src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/jquery.cookie.js"></script>
+<script type="text/javascript" src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/main.js"></script>
+<link rel="stylesheet" href="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/markdown_views.css">
+<link rel="stylesheet" href="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/category.css">
+<script type="text/javascript" src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/MathJax.js"></script>
+<script type="text/javascript" src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/web-storage-cache.min.js"></script>
+<script type="text/javascript" src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/replace.min.js"></script>
+
+
+
+
+  <script type="text/ecmascript">
+      window.quickReplyflag = true;
+           
+            var isBole = false;
+            
+      
+      var fasrc="http://my.csdn.net/my/favorite/miniadd?t=linux%e4%b8%8bgdb%e5%8d%95%e6%ad%a5%e8%b0%83%e8%af%95&u=http://blog.csdn.net/s1234567_89/article/details/7852392"
+
+    </script>
+<div id="article_details" class="details">
+    <div class="article_title">   
+         <span class="ico ico_type_Repost"></span>
+
+
+    <h1>
+        <span class="link_title"><a href="http://blog.csdn.net/s1234567_89/article/details/7852392">
+        linux下gdb单步调试            
+        </a></span>
+    </h1>
+</div>
+
+   
+
+        <div class="article_manage clearfix">
+        <div class="article_l">
+            <span class="link_categories">
+            标签：
+              <a href="http://www.csdn.net/tag/linux" target="_blank" onclick="_gaq.push([&#39;_trackEvent&#39;,&#39;function&#39;, &#39;onclick&#39;, &#39;blog_articles_tag&#39;]);">linux</a><a href="http://www.csdn.net/tag/%e7%a8%8b%e5%ba%8f%e8%b0%83%e8%af%95%e5%b7%a5%e5%85%b7" target="_blank" onclick="_gaq.push([&#39;_trackEvent&#39;,&#39;function&#39;, &#39;onclick&#39;, &#39;blog_articles_tag&#39;]);">程序调试工具</a><a href="http://www.csdn.net/tag/%e5%b7%a5%e5%85%b7" target="_blank" onclick="_gaq.push([&#39;_trackEvent&#39;,&#39;function&#39;, &#39;onclick&#39;, &#39;blog_articles_tag&#39;]);">工具</a><a href="http://www.csdn.net/tag/%e5%9b%be%e5%bd%a2" target="_blank" onclick="_gaq.push([&#39;_trackEvent&#39;,&#39;function&#39;, &#39;onclick&#39;, &#39;blog_articles_tag&#39;]);">图形</a><a href="http://www.csdn.net/tag/unix" target="_blank" onclick="_gaq.push([&#39;_trackEvent&#39;,&#39;function&#39;, &#39;onclick&#39;, &#39;blog_articles_tag&#39;]);">unix</a><a href="http://www.csdn.net/tag/%e5%8c%96%e5%b7%a5" target="_blank" onclick="_gaq.push([&#39;_trackEvent&#39;,&#39;function&#39;, &#39;onclick&#39;, &#39;blog_articles_tag&#39;]);">化工</a>
+            </span>
+        </div>
+        <div class="article_r">
+            <span class="link_postdate">2012-08-10 16:58</span>
+            <span class="link_view" title="阅读次数">16422人阅读</span>
+            <span class="link_comments" title="评论次数"> <a href="http://blog.csdn.net/s1234567_89/article/details/7852392#comments" onclick="_gaq.push([&#39;_trackEvent&#39;,&#39;function&#39;, &#39;onclick&#39;, &#39;blog_articles_pinglun&#39;])">评论</a>(0)</span>
+            <span class="link_collect tracking-ad" data-mod="popu_171"> <a href="javascript:void(0);" onclick="javascript:collectArticle(&#39;linux%e4%b8%8bgdb%e5%8d%95%e6%ad%a5%e8%b0%83%e8%af%95&#39;,&#39;7852392&#39;);return false;" title="收藏" target="_blank">收藏</a></span>
+             <span class="link_report"> <a href="http://blog.csdn.net/s1234567_89/article/details/7852392#report" onclick="javascript:report(7852392,2);return false;" title="举报">举报</a></span>
+
+        </div>
+    </div>
+    <div class="embody" style="display:none" id="embody">
+        <span class="embody_t">本文章已收录于：</span>
+        <div class="embody_c" id="lib" value="{&quot;err&quot;:0,&quot;msg&quot;:&quot;ok&quot;,&quot;data&quot;:[]}"></div>
+    </div>
+    <style type="text/css">        
+            .embody{
+                padding:10px 10px 10px;
+                margin:0 -20px;
+                border-bottom:solid 1px #ededed;                
+            }
+            .embody_b{
+                margin:0 ;
+                padding:10px 0;
+            }
+            .embody .embody_t,.embody .embody_c{
+                display: inline-block;
+                margin-right:10px;
+            }
+            .embody_t{
+                font-size: 12px;
+                color:#999;
+            }
+            .embody_c{
+                font-size: 12px;
+            }
+            .embody_c img,.embody_c em{
+                display: inline-block;
+                vertical-align: middle;               
+            }
+             .embody_c img{               
+                width:30px;
+                height:30px;
+            }
+            .embody_c em{
+                margin: 0 20px 0 10px;
+                color:#333;
+                font-style: normal;
+            }
+    </style>
+    <script type="text/javascript">
+        $(function () {
+            try
+            {
+                var lib = eval("("+$("#lib").attr("value")+")");
+                var html = "";
+                if (lib.err == 0) {
+                    $.each(lib.data, function (i) {
+                        var obj = lib.data[i];
+                        //html += '<img src="' + obj.logo + '"/>' + obj.name + "&nbsp;&nbsp;";
+                        html += ' <a href="' + obj.url + '" target="_blank">';
+                        html += ' <img src="' + obj.logo + '">';
+                        html += ' <em><b>' + obj.name + '</b></em>';
+                        html += ' </a>';
+                    });
+                    if (html != "") {
+                        setTimeout(function () {
+                            $("#lib").html(html);                      
+                            $("#embody").show();
+                        }, 100);
+                    }
+                }      
+            } catch (err)
+            { }
+            
+        });
+    </script>
+    <script type="text/javascript" src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/category.js"></script>  
+
+  
+
+  
+  
+     
+
+<div id="article_content" class="article_content">
+
+<blockquote dir="ltr" style="margin-right:0px">
+<blockquote dir="ltr" style="margin-right:0px">
+<p>&nbsp;</p>
+</blockquote>
+</blockquote>
+<p dir="ltr"><strong><span style="font-family:Courier New"><span style="font-size:12px">一、GDB 概述</span><br>
+</span></strong></p>
+<p><span style="font-family:Courier New">GDB 是 GNU 开源组织发布的一个强大的 UNIX 下的程序调试工具。或许，各位比较喜欢那种图形界面方式的，像 VC 、 BCB 等 IDE 的调试，但如果你是在 UNIX 平台下做软件，你会发现 GDB 这个调试工具有比 VC 、 BCB 的图形化调试器更强大的功能。所谓 “ 寸有所长，尺有所短 ” 就是这个道理。</span></p>
+<p><span style="font-family:Courier New">一般来说， GDB 主要帮忙你完成下面四个方面的功能：</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; 1 、启动你的程序，可以按照你的自定义的要求随心所欲的运行程序。<br>
+&nbsp;&nbsp;&nbsp; 2 、可让被调试的程序在你所指定的调置的断点处停住。（断点可以是条件表达式）<br>
+&nbsp;&nbsp;&nbsp; 3 、当程序被停住时，可以检查此时你的程序中所发生的事。<br>
+&nbsp;&nbsp;&nbsp; 4 、动态的改变你程序的执行环境。</span></p>
+<p><span style="font-family:Courier New">从上面看来， GDB 和一般的调试工具没有什么两样，基本上也是完成这些功能，不过在细节上，你会发现 GDB 这个调试工具的强大，大家可能比较习惯了图形化的调试工具，但有时候，命令行的调试工具却有着图形化工具所不能完成的功能。让我们一一看来。</span></p>
+<p><span style="font-family:Courier New">&nbsp;</span></p>
+<span style="font-family:Courier New"><strong>二、一个调试示例</strong><br>
+</span>
+<p><span style="font-family:Courier New">源程序： tst.c</span></p>
+<p><span style="font-family:Courier New">&nbsp;</span></p>
+<div class="dp-highlighter bg_cpp"><div class="bar"><div class="tools"><b>[cpp]</b> <a href="http://blog.csdn.net/s1234567_89/article/details/7852392#" class="ViewSource" title="view plain" onclick="dp.sh.Toolbar.Command(&#39;ViewSource&#39;,this);return false;">view plain</a><span data-mod="popu_168"> <a href="http://blog.csdn.net/s1234567_89/article/details/7852392#" class="CopyToClipboard" title="copy" onclick="dp.sh.Toolbar.Command(&#39;CopyToClipboard&#39;,this);return false;">copy</a><div style="position: absolute; left: 793px; top: 1007px; width: 18px; height: 18px; z-index: 99;"><embed id="ZeroClipboardMovie_1" src="http://static.blog.csdn.net/scripts/ZeroClipboard/ZeroClipboard.swf" loop="false" menu="false" quality="best" bgcolor="#ffffff" width="18" height="18" name="ZeroClipboardMovie_1" align="middle" allowscriptaccess="always" allowfullscreen="false" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" flashvars="id=1&amp;width=18&amp;height=18" wmode="transparent"></div></span><span data-mod="popu_169"> <a href="http://blog.csdn.net/s1234567_89/article/details/7852392#" class="PrintSource" title="print" onclick="dp.sh.Toolbar.Command(&#39;PrintSource&#39;,this);return false;">print</a></span><a href="http://blog.csdn.net/s1234567_89/article/details/7852392#" class="About" title="?" onclick="dp.sh.Toolbar.Command(&#39;About&#39;,this);return false;">?</a></div></div><ol start="1" class="dp-cpp"><li class="alt"><span><span class="preprocessor">&nbsp;#include&nbsp;&lt;stdio.h&gt;</span><span>&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;<span class="datatypes">int</span><span>&nbsp;func(</span><span class="datatypes">int</span><span>&nbsp;n)&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;{&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="datatypes">int</span><span>&nbsp;sum=0,i;&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">for</span><span>(i=0;&nbsp;i&lt;n;&nbsp;i++)&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sum+=i;&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span><span>&nbsp;sum;&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;}&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;</span></li><li class="alt"><span><span class="datatypes">int</span><span>&nbsp;main()&nbsp;&nbsp;</span></span></li><li class=""><span>{&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="datatypes">int</span><span>&nbsp;i;&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="datatypes">long</span><span>&nbsp;result&nbsp;=&nbsp;0;&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">for</span><span>(i=1;&nbsp;i&lt;=100;&nbsp;i++)&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;result&nbsp;+=&nbsp;i;&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printf(<span class="string">"result[1-100]&nbsp;=&nbsp;%d&nbsp;/n"</span><span>,&nbsp;result&nbsp;);&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printf(<span class="string">"result[1-250]&nbsp;=&nbsp;%d&nbsp;/n"</span><span>,&nbsp;func(250)&nbsp;);&nbsp;&nbsp;</span></span></li><li class=""><span>}&nbsp;&nbsp;</span></li></ol><div class="save_code tracking-ad" data-mod="popu_249" style="display: none;"><a href="javascript:;" target="_blank"><img src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/save_snippets.png"></a></div></div><pre class="cpp" name="code" style="display: none;">      #include &lt;stdio.h&gt;
+      int func(int n)
+      {
+              int sum=0,i;
+              for(i=0; i&lt;n; i++)
+              {
+                      sum+=i;
+              }
+              return sum;
+      }
+     
+     
+     int main()
+     {
+          int i;
+          long result = 0;
+          for(i=1; i&lt;=100; i++)
+          {
+                      result += i;
+          }
+    
+          printf("result[1-100] = %d /n", result );
+          printf("result[1-250] = %d /n", func(250) );
+     }</pre>
+<p><br>
+<span style="font-family:Courier New">编译生成执行文件：（ <a href="http://lib.csdn.net/base/linux" class="replace_word" title="Linux知识库" target="_blank" style="color:#df3434; font-weight:bold;">Linux</a> 下）<br>
+&nbsp;&nbsp;&nbsp; hchen/test&gt; cc -g tst.c -o tst</span></p>
+<p><span style="font-family:Courier New">&nbsp; <img alt="" src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/1344821983_3649.jpg"></span></p>
+<p><span style="font-family:Courier New">启动Gdb:</span></p>
+<p><span style="font-family:Courier New"><img alt="" src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/1344822199_5612.jpg"></span></p>
+<p><span style="font-family:Courier New"><img alt="" src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/1344822792_9534.jpg"></span></p>
+<p><span style="font-family:Courier New"><img alt="" src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/1344823153_9967.jpg" width="558" height="358"></span></p>
+<p><span style="font-family:Courier New">&nbsp;</span></p>
+<p><span style="font-family:Courier New">以上是对于gdb的感性认识，接下来系统地认识一下 gdb 吧。</span></p>
+<p><strong><span style="font-family:Courier New; font-size:18px">三、使用 GDB</span></strong></p>
+<p><span style="font-family:Courier New"><strong><span style="font-size:18px">1.基础</span></strong><br>
+</span></p>
+<p><span style="font-family:Courier New">一般来说 GDB 主要调试的是 C/C++ 的程序。要调试 C/C++ 的程序，首先在编译时，我们必须要把调试信息加到可执行文件中。使用编译器（ cc/gcc/g++ ）的 -g 参数可以做到这一点。如：</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; &gt; cc -g hello.c -o hello<br>
+&nbsp;&nbsp;&nbsp; &gt; g++ -g hello.cpp -o hello</span></p>
+<p><span style="font-family:Courier New"><span style="color:#6666cc">如果没有 -g ，你将看不见程序的函数名、变量名，所代替的全是运行时的内存地址。</span>当你用 -g 把调试信息加入之后，并成功编译目标代码以后，让我们来看看如何用 gdb 来调试他。</span></p>
+<p><span style="font-family:Courier New">启动 gdb 后，就你被带入 gdb 的调试环境中，就可以使用 gdb 的命令开始调试程序了， gdb 的命令可以使用 help 命令来查看，</span></p>
+<p><span style="font-family:Courier New">gdb 的命令很多， gdb 把之分成许多个种类。 help 命令只是例出 gdb 的命令种类，如果要看种类中的命令，可以使用 help &lt;class&gt; 命令，如： help breakpoints ，查看设置断点的所有命令。也可以直接 help &lt;command&gt; 来查看命令的帮助。如下图所示：</span></p>
+<p><span style="font-family:Courier New"><img alt="" src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/1344823736_2130.jpg"></span></p>
+<p><span style="font-family:Courier New">要退出 gdb 时，只用发 quit 或命令简称 q 就行了。</span></p>
+<p><span style="font-family:Courier New">&nbsp;</span></p>
+<p><strong><span style="font-family:Courier New; font-size:18px">2 GDB 中运行 UNIX 的 shell 程序</span></strong></p>
+<p><span style="font-family:Courier New">在 gdb 环境中，你可以执行 UNIX 的 shell 的命令，使用 gdb 的 shell 命令来完成：</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; shell &lt;command string&gt;<br>
+&nbsp;&nbsp;&nbsp; 调用 UNIX 的 shell 来执行 &lt;command string&gt; ，环境变量 SHELL 中定义的 UNIX 的 shell 将会被用来执行 &lt;command string&gt; ，如果 SHELL 没有定义，那就使用 UNIX 的标准 shell ： /bin/sh 。（在 Windows 中使用 Command.com 或 cmd.exe ）</span></p>
+<p><span style="font-family:Courier New">还有一个 gdb 命令是 make ：<br>
+&nbsp;&nbsp;&nbsp; make &lt;make-args&gt;<br>
+&nbsp;&nbsp;&nbsp; 可以在 gdb 中执行 make 命令来重新 build 自己的程序。这个命令等价于 “ shell make &lt;make-args&gt; ” </span>
+</p>
+<p><span style="font-family:Courier New">&nbsp;</span></p>
+<p><span style="font-family:Courier New; font-size:18px"><strong>3 在 GDB 中运行程序</strong></span></p>
+<p><span style="font-family:Courier New">在 gdb 中，运行程序使用 r 或是 run 命令。程序的运行，你有可能需要设置下面四方面的事。</span></p>
+<p><span style="font-family:Courier New">1 、程序运行参数。<br>
+&nbsp;&nbsp;&nbsp; </span><span style="font-family:Courier New; color:#6666cc">set args 可指定运行时参数。（如： set args 10 20 30 40 50 ）<br>
+&nbsp;&nbsp;&nbsp; show args 命令可以查看设置好的运行参数。</span></p>
+<p><span style="font-family:Courier New">2 、运行环境。<br>
+&nbsp;&nbsp;&nbsp; path &lt;dir&gt; 可设定程序的运行路径。<br>
+&nbsp;&nbsp;&nbsp; show paths 查看程序的运行路径。<br>
+&nbsp;&nbsp;&nbsp; set environment varname [=value] 设置环境变量。如： set env USER=hchen<br>
+&nbsp;&nbsp;&nbsp; show environment [varname] 查看环境变量。</span></p>
+<p><span style="font-family:Courier New">3 、工作目录。<br>
+&nbsp;&nbsp;&nbsp; cd &lt;dir&gt; 相当于 shell 的 cd 命令。<br>
+&nbsp;&nbsp;&nbsp; pwd 显示当前的所在目录。</span></p>
+<p><span style="font-family:Courier New">4 、程序的输入输出。<br>
+&nbsp;&nbsp;&nbsp; info terminal 显示你程序用到的终端的模式。<br>
+&nbsp;&nbsp;&nbsp; 使用重定向控制程序输出。如： run &gt; outfile<br>
+&nbsp;&nbsp;&nbsp; tty 命令可以指写输入输出的终端设备。如： tty /dev/ttyb</span></p>
+<p><span style="font-family:Courier New">&nbsp;</span></p>
+<p><strong><span style="font-family:Courier New; font-size:18px">4 调试程序</span></strong></p>
+<p><span style="font-family:Courier New; font-size:14px">&nbsp;调试程序中，暂停程序运行是必须的， GDB 可以方便地暂停程序的运行。你可以设置程序的在哪行停住，在什么条件下停住，在收到什么信号时停往等等。以便于你查看运行时的变量，以及运行时的流程。</span></p>
+<p><span style="font-family:Courier New">在 gdb 中，我们可以有以下几种暂停方式：</span></p>
+<p><span style="font-family:Courier New">断点（ BreakPoint ）、</span></p>
+<p><span style="font-family:Courier New">观察点（ WatchPoint ）、</span></p>
+<p><span style="font-family:Courier New">捕捉点（ CatchPoint ）、</span></p>
+<p><span style="font-family:Courier New">信号（ Signals ）、</span></p>
+<p><span style="font-family:Courier New">线程停止（ Thread Stops ）。</span></p>
+<p><span style="font-family:Courier New">如果要恢复程序运行，可以使用 c 或是 continue 命令。</span></p>
+<p><span style="font-family:Courier New">一、设置断点（ BreakPoint ）<br>
+&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; 我们用 break 命令来设置断点。正面有几点设置断点的方法：<br>
+&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; break &lt;function&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 在进入指定函数时停住。 C++ 中可以使用 class::function 或 function(type,type) 格式来指定函数名。</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; break &lt;linenum&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 在指定行号停住。</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; break +offset<br>
+&nbsp;&nbsp;&nbsp; break -offset<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 在当前行号的前面或后面的 offset 行停住。 offiset 为自然数。</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; break filename:linenum<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 在源文件 filename 的 linenum 行处停住。</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; break filename:function<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 在源文件 filename 的 function 函数的入口处停住。</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; break *address<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 在程序运行的内存地址处停住。</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; break<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; break 命令没有参数时，表示在下一条指令处停住。</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; break ... if &lt;condition&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ... 可以是上述的参数， condition 表示条件，在条件成立时停住。比如在循环境体中，可以设置 break if i=100 ，表示当 i 为 100 时停住程序。</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; 查看断点时，可使用 info 命令，如下所示：（注： n 表示断点号）<br>
+&nbsp;&nbsp;&nbsp; info breakpoints [n]<br>
+&nbsp;&nbsp;&nbsp; info break [n]<br>
+</span></p>
+<p><span style="font-family:Courier New">二、设置观察点（ WatchPoint ）<br>
+&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; 观察点一般来观察某个表达式（变量也是一种表达式）的值是否有变化了，如果有变化，马上停住程序。我们有下面的几种方法来设置观察点：<br>
+&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; watch &lt;expr&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 为表达式（变量） expr 设置一个观察点。一量表达式值有变化时，马上停住程序。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; rwatch &lt;expr&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 当表达式（变量） expr 被读时，停住程序。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; awatch &lt;expr&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 当表达式（变量）的值被读或被写时，停住程序。<br>
+&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; info watchpoints<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 列出当前所设置了的所有观察点。</span></p>
+<p><span style="font-family:Courier New">&nbsp;</span></p>
+<p><span style="font-family:Courier New">三、设置捕捉点（ CatchPoint ）</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; 你可设置捕捉点来补捉程序运行时的一些事件。如：载入共享库（动态链接库）或是 C++ 的异常。设置捕捉点的格式为：<br>
+&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; catch &lt;event&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 当 event 发生时，停住程序。 event 可以是下面的内容：<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1 、 throw 一个 C++ 抛出的异常。（ throw 为关键字）<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2 、 catch 一个 C++ 捕捉到的异常。（ catch 为关键字）<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3 、 exec 调用系统调用 exec 时。（ exec 为关键字，目前此功能只在 HP-UX 下有用）<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 4 、 fork 调用系统调用 fork 时。（ fork 为关键字，目前此功能只在 HP-UX 下有用）<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 5 、 vfork 调用系统调用 vfork 时。（ vfork 为关键字，目前此功能只在 HP-UX 下有用）<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 6 、 load 或 load &lt;libname&gt; 载入共享库（动态链接库）时。（ load 为关键字，目前此功能只在 HP-UX 下有用）<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 7 、 unload 或 unload &lt;libname&gt; 卸载共享库（动态链接库）时。（ unload 为关键字，目前此功能只在 HP-UX 下有用）</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; tcatch &lt;event&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 只设置一次捕捉点，当程序停住以后，应点被自动删除。</span></p>
+<p><span style="font-family:Courier New">四、维护停止点</span></p>
+<p><span style="font-family:Courier New">上面说了如何设置程序的停止点， GDB 中的停止点也就是上述的三类。在 GDB 中，如果你觉得已定义好的停止点没有用了，你可以使用 delete 、 clear 、 disable 、 enable 这几个命令来进行维护。</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; clear<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 清除所有的已定义的停止点。</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; clear &lt;function&gt;<br>
+&nbsp;&nbsp;&nbsp; clear &lt;filename:function&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 清除所有设置在函数上的停止点。</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; clear &lt;linenum&gt;<br>
+&nbsp;&nbsp;&nbsp; clear &lt;filename:linenum&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 清除所有设置在指定行上的停止点。</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; delete [breakpoints] [range...]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 删除指定的断点， breakpoints 为断点号。如果不指定断点号，则表示删除所有的断点。 range 表示断点号的范围（如： 3-7 ）。其简写命令为 d 。</span></p>
+<p><br>
+<span style="font-family:Courier New">比删除更好的一种方法是 disable 停止点， disable 了的停止点， GDB 不会删除，当你还需要时， enable 即可，就好像回收站一样。</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; disable [breakpoints] [range...]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; disable 所指定的停止点， breakpoints 为停止点号。如果什么都不指定，表示 disable 所有的停止点。简写命令是 dis.</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; enable [breakpoints] [range...]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; enable 所指定的停止点， breakpoints 为停止点号。</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; enable [breakpoints] once range...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; enable 所指定的停止点一次，当程序停止后，该停止点马上被 GDB 自动 disable 。</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; enable [breakpoints] delete range...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; enable 所指定的停止点一次，当程序停止后，该停止点马上被 GDB 自动删除。</span></p>
+<p><br>
+<span style="font-family:Courier New">&nbsp;</span></p>
+<p><span style="font-family:Courier New">五、停止条件维护</span></p>
+<p><span style="font-family:Courier New">前面在说到设置断点时，我们提到过可以设置一个条件，当条件成立时，程序自动停止，这是一个非常强大的功能，这里，我想专门说说这个条件的相关维护命令。一般来说，为断点设置一个条件，我们使用 if 关键词，后面跟其断点条件。并且，条件设置好后，我们可以用 condition 命令来修改断点的条件。（只有 break 和 watch 命令支持 if ， catch 目前暂不支持 if ）</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; condition &lt;bnum&gt; &lt;expression&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 修改断点号为 bnum 的停止条件为 expression 。</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; condition &lt;bnum&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 清除断点号为 bnum 的停止条件。</span></p>
+<p><br>
+<span style="font-family:Courier New">还有一个比较特殊的维护命令 ignore ，你可以指定程序运行时，忽略停止条件几次。</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; ignore &lt;bnum&gt; &lt;count&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 表示忽略断点号为 bnum 的停止条件 count 次。</span></p>
+<p><span style="font-family:Courier New">六、为停止点设定运行命令</span></p>
+<p><span style="font-family:Courier New">我们可以使用 GDB 提供的 command 命令来设置停止点的运行命令。也就是说，当运行的程序在被停止住时，我们可以让其自动运行一些别的命令，这很有利行自动化调试。对基于 GDB 的自动化调试是一个强大的支持。</span></p>
+<p><br>
+<span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; commands [bnum]<br>
+&nbsp;&nbsp;&nbsp; ... command-list ...<br>
+&nbsp;&nbsp;&nbsp; end</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; 为断点号 bnum 指写一个命令列表。当程序被该断点停住时， gdb 会依次运行命令列表中的命令。</span></p>
+<p><span style="font-family:Courier New"></span></p>
+<strong><span style="font-size:18px"></span></strong>
+<p><span style="font-family:Courier New">&nbsp;<img alt="" src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/1344825195_9574.jpg"></span></p>
+<span style="font-family:Courier New">七、断点菜单</span>
+<p><span style="font-family:Courier New">在 C++ 中，可能会重复出现同一个名字的函数若干次（函数重载），在这种情况下， break &lt;function&gt; 不能告诉 GDB 要停在哪个函数的入口。当然，你可以使用 break &lt;function(type)&gt; 也就是把函数的参数类型告诉 GDB ，以指定一个函数。否则的话， GDB 会给你列出一个断点菜单供你选择你所需要的断点。你只要输入你菜单列表中的编号就可以了。如：</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; (gdb) b String::after<br>
+&nbsp;&nbsp;&nbsp; [0] cancel<br>
+&nbsp;&nbsp;&nbsp; [1] all<br>
+&nbsp;&nbsp;&nbsp; [2] file:String.cc; line number:867<br>
+&nbsp;&nbsp;&nbsp; [3] file:String.cc; line number:860<br>
+&nbsp;&nbsp;&nbsp; [4] file:String.cc; line number:875<br>
+&nbsp;&nbsp;&nbsp; [5] file:String.cc; line number:853<br>
+&nbsp;&nbsp;&nbsp; [6] file:String.cc; line number:846<br>
+&nbsp;&nbsp;&nbsp; [7] file:String.cc; line number:735<br>
+&nbsp;&nbsp;&nbsp; &gt; 2 4 6<br>
+&nbsp;&nbsp;&nbsp; Breakpoint 1 at 0xb26c: file String.cc, line 867.<br>
+&nbsp;&nbsp;&nbsp; Breakpoint 2 at 0xb344: file String.cc, line 875.<br>
+&nbsp;&nbsp;&nbsp; Breakpoint 3 at 0xafcc: file String.cc, line 846.<br>
+&nbsp;&nbsp;&nbsp; Multiple breakpoints were set.<br>
+&nbsp;&nbsp;&nbsp; Use the "delete" command to delete unwanted<br>
+&nbsp;&nbsp;&nbsp;&nbsp; breakpoints.<br>
+&nbsp;&nbsp;&nbsp; (gdb)</span></p>
+<p><span style="font-family:Courier New">可见， GDB 列出了所有 after 的重载函数，你可以选一下列表编号就行了。 0 表示放弃设置断点， 1 表示所有函数都设置断点。</span></p>
+<p><span style="font-family:Courier New">八、恢复程序运行和单步调试</span></p>
+<p><span style="font-family:Courier New">当程序被停住了，你可以用 continue 命令恢复程序的运行直到程序结束，或下一个断点到来。也可以使用 step 或 next 命令单步跟踪程序。</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; continue [ignore-count]<br>
+&nbsp;&nbsp;&nbsp; c [ignore-count]<br>
+&nbsp;&nbsp;&nbsp; fg [ignore-count]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 恢复程序运行，直到程序结束，或是下一个断点到来。 ignore-count 表示忽略其后的断点次数。 continue ， c ， fg 三个命令都是一样的意思。</span></p>
+<p><br>
+<span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; step &lt;count&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 单步跟踪，如果有函数调用，他会进入该函数。进入函数的前提是，此函数被编译有 debug 信息。很像 VC 等工具中的 step in 。后面可以加 count 也可以不加，不加表示一条条地执行，加表示执行后面的 count 条指令，然后再停住。</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; next &lt;count&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 同样单步跟踪，如果有函数调用，他不会进入该函数。很像 VC 等工具中的 step over 。后面可以加 count 也可以不加，不加表示一条条地执行，加表示执行后面的 count 条指令，然后再停住。</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; set step-mode<br>
+&nbsp;&nbsp;&nbsp; set step-mode on<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 打开 step-mode 模式，于是，在进行单步跟踪时，程序不会因为没有 debug 信息而不停住。这个参数有很利于查看机器码。</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; set step-mod off<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 关闭 step-mode 模式。</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; finish<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 运行程序，直到当前函数完成返回。并打印函数返回时的堆栈地址和返回值及参数值等信息。</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; until 或 u<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 当你厌倦了在一个循环体内单步跟踪时，这个命令可以运行程序直到退出循环体。</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; stepi 或 si<br>
+&nbsp;&nbsp;&nbsp; nexti 或 ni<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 单步跟踪一条机器指令！一条程序代码有可能由数条机器指令完成， stepi 和 nexti 可以单步执行机器指令。与之一样有相同功能的命令是 “ display/i $pc ” ，当运行完这个命令后，单步跟踪会在打出程序代码的同时打出机器指令（也就是汇编代码）</span></p>
+<p><span style="font-family:Courier New">九、信号（ Signals ）</span></p>
+<p><span style="font-family:Courier New">信号是一种软中断，是一种处理异步事件的方法。一般来说，<a href="http://lib.csdn.net/base/operatingsystem" class="replace_word" title="操作系统知识库" target="_blank" style="color:#df3434; font-weight:bold;">操作系统</a>都支持许多信号。尤其是 UNIX ，比较重要应用程序一般都会处理信号。 UNIX 定义了许多信号，比如 SIGINT 表示中断字符信号，也就是 Ctrl+C 的信号， SIGBUS 表示硬件故障的信号； SIGCHLD 表示子进程状态改变信号； SIGKILL 表示终止程序运行的信号，等等。信号量编程是 UNIX 下非常重要的一种技术。</span></p>
+<p><span style="font-family:Courier New">GDB 有能力在你调试程序的时候处理任何一种信号，你可以告诉 GDB 需要处理哪一种信号。你可以要求 GDB 收到你所指定的信号时，马上停住正在运行的程序，以供你进行调试。你可以用 GDB 的 handle 命令来完成这一功能。</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; handle &lt;signal&gt; &lt;keywords...&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 在 GDB 中定义一个信号处理。信号 &lt;signal&gt; 可以以 SIG 开头或不以 SIG 开头，可以用定义一个要处理信号的范围（如： SIGIO-SIGKILL ，表示处理从 SIGIO 信号到 SIGKILL 的信号，其中包括 SIGIO ， SIGIOT ， SIGKILL 三个信号），也可以使用关键字 all 来标明要处理所有的信号。一旦被调试的程序接收到信号，运行程序马上会被 GDB 停住，以供调试。其 &lt;keywords&gt; 可以是以下几种关键字的一个或多个。</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; nostop<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 当被调试的程序收到信号时， GDB 不会停住程序的运行，但会打出消息告诉你收到这种信号。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; stop<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 当被调试的程序收到信号时， GDB 会停住你的程序。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; print<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 当被调试的程序收到信号时， GDB 会显示出一条信息。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; noprint<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 当被调试的程序收到信号时， GDB 不会告诉你收到信号的信息。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; pass<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; noignore<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 当被调试的程序收到信号时， GDB 不处理信号。这表示， GDB 会把这个信号交给被调试程序会处理。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; nopass<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ignore<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 当被调试的程序收到信号时， GDB 不会让被调试程序来处理这个信号。</span></p>
+<p><br>
+<span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; info signals<br>
+&nbsp;&nbsp;&nbsp; info handle<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 查看有哪些信号在被 GDB 检测中。</span></p>
+<p><span style="font-family:Courier New">十、线程（ Thread Stops ）</span></p>
+<p><span style="font-family:Courier New">如果你程序是多线程的话，你可以定义你的断点是否在所有的线程上，或是在某个特定的线程。 GDB 很容易帮你完成这一工作。</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; break &lt;linespec&gt; thread &lt;threadno&gt;<br>
+&nbsp;&nbsp;&nbsp; break &lt;linespec&gt; thread &lt;threadno&gt; if ...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; linespec 指定了断点设置在的源程序的行号。 threadno 指定了线程的 ID ，注意，这个 ID 是 GDB 分配的，你可以通过 “ info threads ” 命令来查看正在运行程序中的线程信息。如果你不指定 thread &lt;threadno&gt; 则表示你的断点设在所有线程上面。你还可以为某线程指定断点条件。如：<br>
+&nbsp;&nbsp; <br>
+<span style="color:#3366ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (gdb) break frik.c:13 thread 28 if bartab &gt; lim</span></span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; 当你的程序被 GDB 停住时，所有的运行线程都会被停住。这方便你你查看运行程序的总体情况。而在你恢复程序运行时，所有的线程也会被恢复运行。那怕是主进程在被单步调试时。</span></p>
+<p><span style="font-family:Courier New">查看栈信息<br>
+—————</span></p>
+<p><span style="font-family:Courier New">当程序被停住了，你需要做的第一件事就是查看程序是在哪里停住的。当你的程序调用了一个函数，函数的地址，函数参数，函数内的局部变量都会被压入 “ 栈 ” （ Stack ）中。你可以用 GDB 命令来查看当前的栈中的信息。</span></p>
+<p><span style="font-family:Courier New">下面是一些查看函数调用栈信息的 GDB 命令：</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; backtrace<br>
+&nbsp;&nbsp;&nbsp; bt<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 打印当前的函数调用栈的所有信息。如：<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (gdb) bt<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #0&nbsp; func (n=250) at tst.c:6<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #1&nbsp; 0x08048524 in main (argc=1, argv=0xbffff674) at tst.c:30<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #2&nbsp; 0x400409ed in __libc_start_main () from /lib/libc.so.6<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 从上可以看出函数的调用栈信息： __libc_start_main --&gt; main() --&gt; func()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
+&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; backtrace &lt;n&gt;<br>
+&nbsp;&nbsp;&nbsp; bt &lt;n&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; n 是一个正整数，表示只打印栈顶上 n 层的栈信息。</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; backtrace &lt;-n&gt;<br>
+&nbsp;&nbsp;&nbsp; bt &lt;-n&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -n 表一个负整数，表示只打印栈底下 n 层的栈信息。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
+如果你要查看某一层的信息，你需要在切换当前的栈，一般来说，程序停止时，最顶层的栈就是当前栈，如果你要查看栈下面层的详细信息，首先要做的是切换当前栈。</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; frame &lt;n&gt;<br>
+&nbsp;&nbsp;&nbsp; f &lt;n&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; n 是一个从 0 开始的整数，是栈中的层编号。比如： frame 0 ，表示栈顶， frame 1 ，表示栈的第二层。<br>
+&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; up &lt;n&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 表示向栈的上面移动 n 层，可以不打 n ，表示向上移动一层。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; down &lt;n&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 表示向栈的下面移动 n 层，可以不打 n ，表示向下移动一层。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; 上面的命令，都会打印出移动到的栈层的信息。如果你不想让其打出信息。你可以使用这三个命令：<br>
+&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; select-frame &lt;n&gt; 对应于 frame 命令。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; up-silently &lt;n&gt; 对应于 up 命令。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; down-silently &lt;n&gt; 对应于 down 命令。</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp; <br>
+查看当前栈层的信息，你可以用以下 GDB 命令：</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; frame 或 f<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 会打印出这些信息：栈的层编号，当前的函数名，函数参数值，函数所在文件及行号，函数执行到的语句。<br>
+&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; info frame<br>
+&nbsp;&nbsp;&nbsp; info f<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 这个命令会打印出更为详细的当前栈层的信息，只不过，大多数都是运行时的内内地址。比如：函数地址，调用函数的地址，被调用函数的地址，目前的函数是由什么样的程序语言写成的、函数参数地址及值、局部变量的地址等等。如：<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (gdb) info f<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Stack level 0, frame at 0xbffff5d4:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; eip = 0x804845d in func (tst.c:6); saved eip 0x8048524<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; called by frame at 0xbffff60c<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; source language c.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Arglist at 0xbffff5d4, args: n=250<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Locals at 0xbffff5d4, Previous frame's sp is 0x0<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Saved registers:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ebp at 0xbffff5d4, eip at 0xbffff5d8<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp;&nbsp; info args<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 打印出当前函数的参数名及其值。<br>
+&nbsp;&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp;&nbsp; info locals<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 打印出当前函数中所有局部变量及其值。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp;&nbsp; info catch<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 打印出当前的函数中的异常处理信息。</span></p>
+<p><br>
+<strong><span style="font-family:Courier New; font-size:18px">4&nbsp; 查看源程序<br>
+&nbsp;</span></strong></p>
+<span style="font-family:Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<p><span style="font-family:Courier New">一、显示源代码</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; GDB 可以打印出所调试程序的源代码，当然，在程序编译时一定要加上 -g 的参数，把源程序信息编译到执行文件中。不然就看不到源程序了。当程序停下来以后， GDB 会报告程序停在了那个文件的第几行上。你可以用 list 命令来打印程序的源代码。还是来看一看查看源代码的 GDB 命令吧。<br>
+&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; list &lt;linenum&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 显示程序第 linenum 行的周围的源程序。<br>
+&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; list &lt;function&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 显示函数名为 function 的函数的源程序。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; list<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 显示当前行后面的源程序。<br>
+&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; list -<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 显示当前行前面的源程序。</span></p>
+<p><span style="font-family:Courier New">一般是打印当前行的上 5 行和下 5 行，如果显示函数是是上 2 行下 8 行，默认是 10 行，当然，你也可以定制显示的范围，使用下面命令可以设置一次显示源程序的行数。</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; set listsize &lt;count&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 设置一次显示源代码的行数。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; show listsize<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 查看当前 listsize 的设置。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></p>
+<p><span style="font-family:Courier New">list 命令还有下面的用法：</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; list &lt;first&gt;, &lt;last&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 显示从 first 行到 last 行之间的源代码。<br>
+&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; list , &lt;last&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 显示从当前行到 last 行之间的源代码。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; list +<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 往后显示源代码。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></p>
+<p><span style="font-family:Courier New">一般来说在 list 后面可以跟以下这们的参数：</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; &lt;linenum&gt;&nbsp;&nbsp; 行号。<br>
+&nbsp;&nbsp;&nbsp; &lt;+offset&gt;&nbsp;&nbsp; 当前行号的正偏移量。<br>
+&nbsp;&nbsp;&nbsp; &lt;-offset&gt;&nbsp;&nbsp; 当前行号的负偏移量。<br>
+&nbsp;&nbsp;&nbsp; &lt;filename:linenum&gt;&nbsp; 哪个文件的哪一行。<br>
+&nbsp;&nbsp;&nbsp; &lt;function&gt;&nbsp; 函数名。<br>
+&nbsp;&nbsp;&nbsp; &lt;filename:function&gt; 哪个文件中的哪个函数。<br>
+&nbsp;&nbsp;&nbsp; &lt;*address&gt;&nbsp; 程序运行时的语句在内存中的地址。<br>
+&nbsp;&nbsp; </span></p>
+<p><span style="font-family:Courier New">二、搜索源代码</span></p>
+<p><span style="font-family:Courier New">不仅如此， GDB 还提供了源代码搜索的命令：</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; forward-search &lt;regexp&gt;<br>
+&nbsp;&nbsp;&nbsp; search &lt;regexp&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 向前面搜索。</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; reverse-search &lt;regexp&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 全部搜索。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
+其中， &lt;regexp&gt; 就是正则表达式，也主一个字符串的匹配模式，关于正则表达式，我就不在这里讲了，还请各位查看相关资料。</span></p>
+<p><br>
+<span style="font-family:Courier New">三、指定源文件的路径</span></p>
+<p><span style="font-family:Courier New">三、指定源文件的路径</span></p>
+<p><span style="font-family:Courier New">某些时候，用 -g 编译过后的执行程序中只是包括了源文件的名字，没有路径名。 GDB 提供了可以让你指定源文件的路径的命令，以便 GDB 进行搜索。</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; directory &lt;dirname ... &gt;<br>
+&nbsp;&nbsp;&nbsp; dir &lt;dirname ... &gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 加一个源文件路径到当前路径的前面。如果你要指定多个路径， UNIX 下你可以使用 “ : ” ， Windows 下你可以使用 “ ; ” 。<br>
+&nbsp;&nbsp;&nbsp; directory<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 清除所有的自定义的源文件搜索路径信息。<br>
+&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; show directories<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 显示定义了的源文件搜索路径。</span></p>
+<p><span style="font-family:Courier New">四、源代码的内存</span></p>
+<p><span style="font-family:Courier New">你可以使用 info line 命令来查看源代码在内存中的地址。 info line 后面可以跟 “ 行号 ” ， “ 函数名 ” ， “ 文件名 : 行号 ” ， “ 文件名 : 函数名 ” ，这个命令会打印出所指定的源码在运行时的内存地址，如：</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (gdb) info line tst.c:func<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Line 5 of "tst.c" starts at address 0x8048456 &lt;func+6&gt; and ends at 0x804845d &lt;func+13&gt;.</span></p>
+<p><span style="font-family:Courier New">还有一个命令（ disassemble ）你可以查看源程序的当前执行时的机器码，这个命令会把目前内存中的指令 dump 出来。</span></p>
+<p><span style="font-family:Courier New">&nbsp;</span></p>
+<p><span style="font-family:Courier New">查看运行时数据<br>
+———————<br>
+&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; 在你调试程序时，当程序被停住时，你可以使用 print 命令（简写命令为 p ），或是同义命令 inspect 来查看当前程序的运行数据。 print 命令的格式是：<br>
+&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; print &lt;expr&gt;<br>
+&nbsp;&nbsp;&nbsp; print /&lt;f&gt; &lt;expr&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;expr&gt; 是表达式，是你所调试的程序的语言的表达式（ GDB 可以调试多种编程语言）， &lt;f&gt; 是输出的格式，比如，如果要把表达式按 16 进制的格式输出，那么就是 /x 。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
+</span></p>
+<p><span style="font-family:Courier New">一、表达式</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; print 和许多 GDB 的命令一样，可以接受一个表达式， GDB 会根据当前的程序运行的数据来计算这个表达式，既然是表达式，那么就可以是当前程序运行中的 const 常量、变量、函数等内容。可惜的是 GDB 不能使用你在程序中所定义的宏。<br>
+&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; 表达式的语法应该是当前所调试的语言的语法，由于 C/C++ 是一种大众型的语言，所以，本文中的例子都是关于 C/C++ 的。（而关于用 GDB 调试其它语言的章节，我将在后面介绍）<br>
+&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; 在表达式中，有几种 GDB 所支持的操作符，它们可以用在任何一种语言中。<br>
+&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; @<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 是一个和数组有关的操作符，在后面会有更详细的说明。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; ::<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 指定一个在文件或是一个函数中的变量。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; {&lt;type&gt;} &lt;addr&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 表示一个指向内存地址 &lt;addr&gt; 的类型为 type 的一个对象。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
+二、程序变量</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; 在 GDB 中，你可以随时查看以下三种变量的值：<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1 、全局变量（所有文件可见的）<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2 、静态全局变量（当前文件可见的）<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3 、局部变量（当前 Scope 可见的）<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; 如果你的局部变量和全局变量发生冲突（也就是重名），一般情况下是局部变量会隐藏全局变量，也就是说，如果一个全局变量和一个函数中的局部变量同名时，如果当前停止点在函数中，用 print 显示出的变量的值会是函数中的局部变量的值。如果此时你想查看全局变量的值时，你可以使用 “ :: ” 操作符：<br>
+&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; file::variable<br>
+&nbsp;&nbsp;&nbsp; function::variable<br>
+&nbsp;&nbsp;&nbsp; 可以通过这种形式指定你所想查看的变量，是哪个文件中的或是哪个函数中的。例如，查看文件 f2.c 中的全局变量 x 的值：<br>
+&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; gdb) p 'f2.c'::x<br>
+&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; 当然， “ :: ” 操作符会和 C++ 中的发生冲突， GDB 能自动识别 “ :: ” 是否 C++ 的操作符，所以你不必担心在调试 C++ 程序时会出现异常。<br>
+</span></p>
+<p><span style="font-family:Courier New">三、数组</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; 有时候，你需要查看一段连续的内存空间的值。比如数组的一段，或是动态分配的数据的大小。你可以使用 GDB 的 “ @ ” 操作符， “ @ ” 的左边是第一个内存的地址的值， “ @ ” 的右边则你你想查看内存的长度。例如，你的程序中有这样的语句：<br>
+&nbsp;&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; int *array = (int *) malloc (len * sizeof (int));<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; 于是，在 GDB 调试过程中，你可以以如下命令显示出这个动态数组的取值：</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; p </span><a href="mailto:*array@len"><span style="font-family:Courier New; color:#336699">*array@len</span></a></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; @ 的左边是数组的首地址的值，也就是变量 array 所指向的内容，右边则是数据的长度，其保存在变量 len 中，其输出结果，大约是下面这个样子的：<br>
+&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (gdb) p </span><a href="mailto:*array@len"><span style="font-family:Courier New; color:#336699">*array@len</span></a><br>
+<span style="font-family:Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $1 = {2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40}</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; 如果是静态数组的话，可以直接用 print 数组名，就可以显示数组中所有数据的内容了。</span></p>
+<p><span style="font-family:Courier New">四、输出格式</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; 一般来说， GDB 会根据变量的类型输出变量的值。但你也可以自定义 GDB 的输出的格式。例如，你想输出一个整数的十六进制，或是二进制来查看这个整型变量的中的位的情况。要做到这样，你可以使用 GDB 的数据显示格式：<br>
+&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; x&nbsp; 按十六进制格式显示变量。<br>
+&nbsp;&nbsp;&nbsp; d&nbsp; 按十进制格式显示变量。<br>
+&nbsp;&nbsp;&nbsp; u&nbsp; 按十六进制格式显示无符号整型。<br>
+&nbsp;&nbsp;&nbsp; o&nbsp; 按八进制格式显示变量。<br>
+&nbsp;&nbsp;&nbsp; t&nbsp; 按二进制格式显示变量。<br>
+&nbsp;&nbsp;&nbsp; a&nbsp; 按十六进制格式显示变量。<br>
+&nbsp;&nbsp;&nbsp; c&nbsp; 按字符格式显示变量。<br>
+&nbsp;&nbsp;&nbsp; f&nbsp; 按浮点数格式显示变量。</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (gdb) p i<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $21 = 101&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (gdb) p/a i<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $22 = 0x65<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (gdb) p/c i<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $23 = 101 'e'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (gdb) p/f i<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $24 = 1.41531145e-43<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (gdb) p/x i<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $25 = 0x65<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (gdb) p/t i<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $26 = 1100101</span></p>
+<p><span style="font-family:Courier New">五、查看内存</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; 你可以使用 examine 命令（简写是 x ）来查看内存地址中的值。 x 命令的语法如下所示：<br>
+&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; x/&lt;n/f/u&gt; &lt;addr&gt;<br>
+&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; n 、 f 、 u 是可选的参数。<br>
+&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; n 是一个正整数，表示显示内存的长度，也就是说从当前地址向后显示几个地址的内容。<br>
+&nbsp;&nbsp;&nbsp; f 表示显示的格式，参见上面。如果地址所指的是字符串，那么格式可以是 s ，如果地十是指令地址，那么格式可以是 i 。<br>
+&nbsp;&nbsp;&nbsp; u 表示从当前地址往后请求的字节数，如果不指定的话， GDB 默认是 4 个 bytes 。 u 参数可以用下面的字符来代替， b 表示单字节， h 表示双字节， w 表示四字节， g 表示八字节。当我们指定了字节长度后， GDB 会从指内存定的内存地址开始，读写指定字节，并把其当作一个值取出来。<br>
+&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; &lt;addr&gt; 表示一个内存地址。</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; n/f/u 三个参数可以一起使用。例如：<br>
+&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; 命令： x/3uh 0x54320 表示，从内存地址 0x54320 读取内容， h 表示以双字节为一个单位， 3 表示三个单位， u 表示按十六进制显示。<br>
+</span></p>
+<p><span style="font-family:Courier New">六、自动显示</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; 你可以设置一些自动显示的变量，当程序停住时，或是在你单步跟踪时，这些变量会自动显示。相关的 GDB 命令是 display 。<br>
+&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; display &lt;expr&gt;<br>
+&nbsp;&nbsp;&nbsp; display/&lt;fmt&gt; &lt;expr&gt;<br>
+&nbsp;&nbsp;&nbsp; display/&lt;fmt&gt; &lt;addr&gt;<br>
+&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; expr 是一个表达式， fmt 表示显示的格式， addr 表示内存地址，当你用 display 设定好了一个或多个表达式后，只要你的程序被停下来， GDB 会自动显示你所设置的这些表达式的值。<br>
+&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; 格式 i 和 s 同样被 display 支持，一个非常有用的命令是：<br>
+&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; display/i $pc<br>
+&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; $pc 是 GDB 的环境变量，表示着指令的地址， /i 则表示输出格式为机器指令码，也就是汇编。于是当程序停下后，就会出现源代码和机器指令码相对应的情形，这是一个很有意思的功能。<br>
+&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; 下面是一些和 display 相关的 GDB 命令：<br>
+&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; undisplay &lt;dnums...&gt;<br>
+&nbsp;&nbsp;&nbsp; delete display &lt;dnums...&gt;<br>
+&nbsp;&nbsp;&nbsp; 删除自动显示， dnums 意为所设置好了的自动显式的编号。如果要同时删除几个，编号可以用空格分隔，如果要删除一个范围内的编号，可以用减号表示（如： 2-5 ）<br>
+&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; disable display &lt;dnums...&gt;<br>
+&nbsp;&nbsp;&nbsp; enable display &lt;dnums...&gt;<br>
+&nbsp;&nbsp;&nbsp; disable 和 enalbe 不删除自动显示的设置，而只是让其失效和恢复。<br>
+&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; info display<br>
+&nbsp;&nbsp;&nbsp; 查看 display 设置的自动显示的信息。 GDB 会打出一张表格，向你报告当然调试中设置了多少个自动显示设置，其中包括，设置的编号，表达式，是否 enable 。</span></p>
+<p><span style="font-family:Courier New">七、设置显示选项</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; GDB 中关于显示的选项比较多，这里我只例举大多数常用的选项。</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; set print address<br>
+&nbsp;&nbsp;&nbsp; set print address on<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 打开地址输出，当程序显示函数信息时， GDB 会显出函数的参数地址。系统默认为打开的，如：<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (gdb) f<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #0&nbsp; set_quotes (lq=0x34c78 "&lt;&lt;", rq=0x34c88 "&gt;&gt;")<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at input.c:530<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 530&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (lquote != def_lquote)</span></p>
+<p><br>
+<span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; set print address off<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 关闭函数的参数地址显示，如：<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (gdb) set print addr off<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (gdb) f<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #0&nbsp; set_quotes (lq="&lt;&lt;", rq="&gt;&gt;") at input.c:530<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 530&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (lquote != def_lquote)</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; show print address<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 查看当前地址显示选项是否打开。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; set print array<br>
+&nbsp;&nbsp;&nbsp; set print array on<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 打开数组显示，打开后当数组显示时，每个元素占一行，如果不打开的话，每个元素则以逗号分隔。这个选项默认是关闭的。与之相关的两个命令如下，我就不再多说了。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; set print array off<br>
+&nbsp;&nbsp;&nbsp; show print array</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; set print elements &lt;number-of-elements&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 这个选项主要是设置数组的，如果你的数组太大了，那么就可以指定一个 &lt;number-of-elements&gt; 来指定数据显示的最大长度，当到达这个长度时， GDB 就不再往下显示了。如果设置为 0 ，则表示不限制。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; show print elements<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 查看 print elements 的选项信息。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; set print null-stop &lt;on/off&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 如果打开了这个选项，那么当显示字符串时，遇到结束符则停止显示。这个选项默认为 off 。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; set print pretty on<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 如果打开 printf pretty 这个选项，那么当 GDB 显示结构体时会比较漂亮。如：</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $1 = {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; next = 0x0,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; flags = {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; sweet = 1,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; sour = 1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; },<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; meat = 0x54 "Pork"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; set print pretty off<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 关闭 printf pretty 这个选项， GDB 显示结构体时会如下显示：<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $1 = {next = 0x0, flags = {sweet = 1, sour = 1}, meat = 0x54 "Pork"}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; show print pretty<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 查看 GDB 是如何显示结构体的。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
+&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; set print sevenbit-strings &lt;on/off&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 设置字符显示，是否按 “ /nnn ” 的格式显示，如果打开，则字符串或字符数据按 /nnn 显示，如 “ /065 ” 。<br>
+&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; show print sevenbit-strings<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 查看字符显示开关是否打开。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; set print union &lt;on/off&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 设置显示结构体时，是否显式其内的联合体数据。例如有以下<a href="http://lib.csdn.net/base/datastructure" class="replace_word" title="算法与数据结构知识库" target="_blank" style="color:#df3434; font-weight:bold;">数据结构</a>：<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; typedef enum {Tree, Bug} Species;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; typedef enum {Big_tree, Acorn, Seedling} Tree_forms;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; typedef enum {Caterpillar, Cocoon, Butterfly}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Bug_forms;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; struct thing {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Species it;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; union {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Tree_forms tree;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Bug_forms bug;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } form;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; };<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; struct thing foo = {Tree, {Acorn}};</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 当打开这个开关时，执行 p foo 命令后，会如下显示：<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $1 = {it = Tree, form = {tree = Acorn, bug = Cocoon}}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 当关闭这个开关时，执行 p foo 命令后，会如下显示：<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $1 = {it = Tree, form = {...}}</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; show print union<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 查看联合体数据的显示方式<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; set print object &lt;on/off&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 在 C++ 中，如果一个对象指针指向其派生类，如果打开这个选项， GDB 会自动按照虚方法调用的规则显示输出，如果关闭这个选项的话， GDB 就不管虚函数表了。这个选项默认是 off 。<br>
+&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; show print object<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 查看对象选项的设置。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; set print static-members &lt;on/off&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 这个选项表示，当显示一个 C++ 对象中的内容是，是否显示其中的静态数据成员。默认是 on 。<br>
+&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; show print static-members<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 查看静态数据成员选项设置。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; set print vtbl &lt;on/off&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 当此选项打开时， GDB 将用比较规整的格式来显示虚函数表时。其默认是关闭的。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; show print vtbl<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 查看虚函数显示格式的选项。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
+八、历史记录</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; 当你用 GDB 的 print 查看程序运行时的数据时，你每一个 print 都会被 GDB 记录下来。 GDB 会以 $1, $2, $3 ..... 这样的方式为你每一个 print 命令编上号。于是，你可以使用这个编号访问以前的表达式，如 $1 。这个功能所带来的好处是，如果你先前输入了一个比较长的表达式，如果你还想查看这个表达式的值，你可以使用历史记录来访问，省去了重复输入。<br>
+&nbsp;&nbsp; <br>
+</span></p>
+<p><span style="font-family:Courier New">九、 GDB 环境变量</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; 你可以在 GDB 的调试环境中定义自己的变量，用来保存一些调试程序中的运行数据。要定义一个 GDB 的变量很简单只需。使用 GDB 的 set 命令。 GDB 的环境变量和 UNIX 一样，也是以 $ 起头。如：<br>
+&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; set $foo = *object_ptr<br>
+&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; 使用环境变量时， GDB 会在你第一次使用时创建这个变量，而在以后的使用中，则直接对其賦值。环境变量没有类型，你可以给环境变量定义任一的类型。包括结构体和数组。<br>
+&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; show convenience<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 该命令查看当前所设置的所有的环境变量。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; 这是一个比较强大的功能，环境变量和程序变量的交互使用，将使得程序调试更为灵活便捷。例如：<br>
+&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; set $i = 0<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; print bar[$i++]-&gt;contents<br>
+&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; 于是，当你就不必， print bar[0]-&gt;contents, print bar[1]-&gt;contents 地输入命令了。输入这样的命令后，只用敲回车，重复执行上一条语句，环境变量会自动累加，从而完成逐个输出的功能。<br>
+</span></p>
+<p><span style="font-family:Courier New">&nbsp;<strong>产生信号量</strong></span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; 使用 singal 命令，可以产生一个信号量给被调试的程序。如：中断信号 Ctrl+C 。这非常方便于程序的调试，可以在程序运行的任意位置设置断点，并在该断点用 GDB 产生一个信号量，这种精确地在某处产生信号非常有利程序的调试。<br>
+&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; 语法是： signal &lt;singal&gt; ， UNIX 的系统信号量通常从 1 到 15 。所以 &lt;singal&gt; 取值也在这个范围。<br>
+&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; single 命令和 shell 的 kill 命令不同，系统的 kill 命令发信号给被调试程序时，是由 GDB 截获的，而 single 命令所发出一信号则是直接发给被调试程序的。<br>
+</span></p>
+<p><span style="font-family:Courier New">四、强制函数返回</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; 如果你的调试断点在某个函数中，并还有语句没有执行完。你可以使用 return 命令强制函数忽略还没有执行的语句并返回。<br>
+&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; return<br>
+&nbsp;&nbsp;&nbsp; return &lt;expression&gt;<br>
+&nbsp;&nbsp;&nbsp; 使用 return 命令取消当前函数的执行，并立即返回，如果指定了 &lt;expression&gt; ，那么该表达式的值会被认作函数的返回值。<br>
+&nbsp;&nbsp; <br>
+&nbsp;&nbsp; <br>
+五、强制调用函数</span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; call &lt;expr&gt;<br>
+&nbsp;&nbsp;&nbsp; 表达式中可以一是函数，以此达到强制调用函数的目的。并显示函数的返回值，如果函数返回值是 void ，那么就不显示。<br>
+&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; 另一个相似的命令也可以完成这一功能 —— print ， print 后面可以跟表达式，所以也可以用他来调用函数， print 和 call 的不同是，如果函数返回 void ， call 则不显示， print 则显示函数返回值，并把该值存入历史数据中</span></p>
+<p><span style="font-family:Courier New; font-size:18px"><strong>后记</strong></span></p>
+<p><span style="font-family:Courier New">&nbsp;&nbsp;&nbsp; GDB 是一个强大的命令行调试工具。大家知道命令行的强大就是在于，其可以形成执行序列，形成脚本。 UNIX 下的软件全是命令行的，这给程序开发提代供了极大的便利，命令行软件的优势在于，它们可以非常容易的集成在一起，使用几个简单的已有工具的命令，就可以做出一个非常强大的功能。&nbsp;&nbsp;<br>
+</span></p>
+<p><br>
+<span style="font-family:Courier New">&nbsp;</span></p>
+<p><span style="font-family:Courier New">本文来自CSDN博客，转载请标明出处：</span><a href="http://blog.csdn.net/zzymusic/archive/2009/11/17/4815142.aspx"><span style="font-family:Courier New; color:#336699">http://blog.csdn.net/zzymusic/archive/2009/11/17/4815142.aspx</span></a></p>
+   
+</div>
+
+
+
+
+<!-- Baidu Button BEGIN -->
+
+
+
+
+<div class="bdsharebuttonbox tracking-ad bdshare-button-style0-16" style="float: right;" data-mod="popu_172" data-bd-bind="1486182094289">
+<a href="http://blog.csdn.net/s1234567_89/article/details/7852392#" class="bds_more" data-cmd="more" style="background-position:0 0 !important; background-image: url(http://bdimg.share.baidu.com/static/api/img/share/icons_0_16.png?v=d754dcc0.png) !important" target="_blank"></a>
+<a href="http://blog.csdn.net/s1234567_89/article/details/7852392#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间" style="background-position:0 -52px !important" target="_blank"></a>
+<a href="http://blog.csdn.net/s1234567_89/article/details/7852392#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博" style="background-position:0 -104px !important" target="_blank"></a>
+<a href="http://blog.csdn.net/s1234567_89/article/details/7852392#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博" style="background-position:0 -260px !important" target="_blank"></a>
+<a href="http://blog.csdn.net/s1234567_89/article/details/7852392#" class="bds_renren" data-cmd="renren" title="分享到人人网" style="background-position:0 -208px !important" target="_blank"></a>
+<a href="http://blog.csdn.net/s1234567_89/article/details/7852392#" class="bds_weixin" data-cmd="weixin" title="分享到微信" style="background-position:0 -1612px !important" target="_blank"></a>
+</div>
+<script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "1", "bdMiniList": false, "bdPic": "", "bdStyle": "0", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];</script>
+<!-- Baidu Button END -->
+
+   <link rel="stylesheet" href="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/blog_detail.css">
+
+    
+<!--172.16.140.15-->
+
+<!-- Baidu Button BEGIN -->
+<script type="text/javascript" id="bdshare_js" data="type=tools&amp;uid=1536434" src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/bds_s_v2.js"></script>
+
+<script type="text/javascript">
+    document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static/js/shell_v2.js?cdnversion=" + Math.ceil(new Date()/3600000)
+</script>
+<!-- Baidu Button END -->
+
+ 
+
+
+        <div id="digg" articleid="7852392">
+            <dl id="btnDigg" class="digg digg_disable" onclick="btndigga();">
+               
+                 <dt>顶</dt>
+                <dd>3</dd>
+            </dl>
+           
+              
+            <dl id="btnBury" class="digg digg_disable" onclick="btnburya();">
+              
+                  <dt>踩</dt>
+                <dd>0</dd>               
+            </dl>
+            
+        </div>
+     <div class="tracking-ad" data-mod="popu_222"><a href="javascript:void(0);" target="_blank">&nbsp;</a>   </div>
+    <div class="tracking-ad" data-mod="popu_223"> <a href="javascript:void(0);" target="_blank">&nbsp;</a></div>
+    <script type="text/javascript">
+                function btndigga() {
+                    $(".tracking-ad[data-mod='popu_222'] a").click();
+                }
+                function btnburya() {
+                    $(".tracking-ad[data-mod='popu_223'] a").click();
+                }
+            </script>
+
+   <ul class="article_next_prev">
+                <li class="prev_article"><span onclick="_gaq.push([&#39;_trackEvent&#39;,&#39;function&#39;, &#39;onclick&#39;, &#39;blog_articles_shangyipian&#39;]);location.href=&#39;/s1234567_89/article/details/7851357&#39;;">上一篇</span><a href="http://blog.csdn.net/s1234567_89/article/details/7851357" onclick="_gaq.push([&#39;_trackEvent&#39;,&#39;function&#39;, &#39;onclick&#39;, &#39;blog_articles_shangyipian&#39;])">doxygen</a></li>
+                <li class="next_article"><span onclick="_gaq.push([&#39;_trackEvent&#39;,&#39;function&#39;, &#39;onclick&#39;, &#39;blog_articles_xiayipian&#39;]);location.href=&#39;/s1234567_89/article/details/7865542&#39;;">下一篇</span><a href="http://blog.csdn.net/s1234567_89/article/details/7865542" onclick="_gaq.push([&#39;_trackEvent&#39;,&#39;function&#39;, &#39;onclick&#39;, &#39;blog_articles_xiayipian&#39;])">fuse的一些理解-备忘</a></li>
+    </ul>
+
+    <div style="clear:both; height:10px;"></div>
+
+
+      
+</div>
+
+    <div>
+            <div class="J_adv" data-view="true" data-mod="ad_popu_205" data-mtp="43" data-order="114" data-con="ad_content_1900" style="width: 728px; height: 90px;"><script src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-8990951720398508" data-ad-slot="8267689356/3776917242"></ins><script>(adsbygoogle=window.adsbygoogle || []).push({});</script></div> 
+     </div>
+
+<div id="suggest">
+
+</div>
+         <script language="javascript" type="text/javascript">     
+             $(function(){
+                 $.get("/S1234567_89/svc/GetSuggestContent/7852392",function(data){
+                     $("#suggest").html(data);
+                 });     
+             });             
+         </script>  
+
+
+<style>
+.blog-ass-articl dd {
+color: #369;
+width: 99%; /*修改行*/
+float: left;
+overflow: hidden;
+font: normal normal 12px/23px "SimSun";
+height: 23px;
+margin: 0;
+padding: 0 0 0 10px;
+margin-right: 30px;
+background: url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;
+}
+</style>
+
+ <link rel="stylesheet" href="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/replace.css">
+
+<div id="relate" data-mod="popu_218" class="tracking-ad" style="display: block;">
+        <div class="relate_t">
+            <h3><span>参考知识库</span></h3>
+        </div>
+        <div class="relate_c"><dl class="relate_list"><dt><a target="_blank" href="http://lib.csdn.net/base/dotnet"><img src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/1470876331285_285.jpg" alt="img"></a></dt><dd><h4><a target="_blank" href="http://lib.csdn.net/base/dotnet">.NET知识库</a></h4><p><label><span>2911</span><em>关注</em><i>|</i><span>815</span><em>收录</em></label></p></dd></dl><dl class="relate_list"><dt><a target="_blank" href="http://lib.csdn.net/base/linux"><img src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/1468390230134_134.jpg" alt="img"></a></dt><dd><h4><a target="_blank" href="http://lib.csdn.net/base/linux">Linux知识库</a></h4><p><label><span>9344</span><em>关注</em><i>|</i><span>3511</span><em>收录</em></label></p></dd></dl><dl class="relate_list"><dt><a target="_blank" href="http://lib.csdn.net/base/operatingsystem"><img src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/1464938192555_555.jpg" alt="img"></a></dt><dd><h4><a target="_blank" href="http://lib.csdn.net/base/operatingsystem">操作系统知识库</a></h4><p><label><span>4849</span><em>关注</em><i>|</i><span>2210</span><em>收录</em></label></p></dd></dl><dl class="relate_list"><dt><a target="_blank" href="http://lib.csdn.net/base/datastructure"><img src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/1461035533512_512.jpg" alt="img"></a></dt><dd><h4><a target="_blank" href="http://lib.csdn.net/base/datastructure">算法与数据结构知识库</a></h4><p><label><span>12722</span><em>关注</em><i>|</i><span>2320</span><em>收录</em></label></p></dd></dl></div>
+</div>
+ 
+
+<dl class="blog-ass-articl" id="res-relatived"> 
+    <div class="embody embody_b" id="libkeyparent" style="display:none">
+            <span class="embody_t">更多资料请参考：</span>
+            <div class="embody_c" id="libkey"></div>
+    </div>
+
+
+     <dt><span>猜你在找</span></dt>    
+
+
+   
+
+
+    <div id="adCollege" style="width: 42%;float: left;"> 
+        <script src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/job_reco.js" type="text/javascript"></script> 
+        <script type="text/javascript">
+            csdn.position.showEdu({
+                sourceType: "blog",
+                searchType: "detail",
+                searchKey: "7852392",
+                username: "",
+                recordcount: "5",
+                containerId: "adCollege" //容器DIV的id。 
+            });
+        </script> 
+    <div class="tracking-ad" data-mod="popu_84"><dd style="background:url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px; white-space: nowrap;"><a href="http://edu.csdn.net/course/detail/1039" title="2017跟老男孩学Linux运维：Shell编程实战书籍视频-第1-20章" strategy="v4:content" target="_blank">2017跟老男孩学Linux运维：Shell编程实战书籍视频-第1-20章</a></dd><dd style="background:url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px; white-space: nowrap;"><a href="http://edu.csdn.net/course/detail/1746" title="Linux环境C语言编程基础" strategy="v4:content" target="_blank">Linux环境C语言编程基础</a></dd><dd style="background:url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px; white-space: nowrap;"><a href="http://edu.csdn.net/course/detail/2575" title="2016高薪Linux培训教程-shell脚本入门及正则表达式" strategy="v4:content" target="_blank">2016高薪Linux培训教程-shell脚本入门及正则表达式</a></dd><dd style="background:url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px; white-space: nowrap;"><a href="http://edu.csdn.net/course/detail/283" title="Linux基础入门" strategy="v4:content" target="_blank">Linux基础入门</a></dd><dd style="background:url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px; white-space: nowrap;"><a href="http://edu.csdn.net/course/detail/3331" title="大数据培训（第三季）——Linux基础" strategy="v4:content" target="_blank">大数据培训（第三季）——Linux基础</a></dd></div></div>  
+
+    
+     <div id="res" data-mod="popu_36" class="tracking-ad" style="width: 42%; float: left; margin-right: 30px; display: block;"><dd style="background:url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;"><a href="http://blog.csdn.net/YSBJ123/article/details/50131817" title="Linux下使用gdb进行单步调试一" strategy="SearchAlgorithm" target="_blank">Linux下使用gdb进行单步调试一</a></dd><dd style="background:url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;"><a href="http://blog.csdn.net/oLinXi1234567/article/details/24256915" title="linux下gdb单步调试 " strategy="SearchAlgorithm" target="_blank">linux下gdb单步调试 </a></dd><dd style="background:url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;"><a href="http://blog.csdn.net/zzymusic/article/details/4815142" title="linux下gdb单步调试" strategy="SearchAlgorithm" target="_blank">linux下gdb单步调试</a></dd><dd style="background:url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;"><a href="http://blog.csdn.net/tracyjk/article/details/6106297" title="linux下gdb单步调试中" strategy="SearchAlgorithm" target="_blank">linux下gdb单步调试中</a></dd><dd style="background:url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;"><a href="http://blog.csdn.net/cc96610536/article/details/8770924" title="linux下gdb单步调试" strategy="SearchAlgorithm" target="_blank">linux下gdb单步调试</a></dd></div>
+   
+</dl>
+
+
+<script type="text/javascript">
+    $(function () {
+        setTimeout(function () {
+            var searchtitletags = 'linux下gdb单步调试' + ',' + $("#tags").html();
+            searchService({
+                index: 'blog',
+                query: searchtitletags,
+                from: 5,
+                size: 5,
+                appendTo: '#res',
+                url: 'recommend',
+                his: 2,
+                client: "blog_cf_enhance",
+                tmpl: '<dd style="background:url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;"><a href="#{ url }" title="#{ title }" strategy="#{ strategy }">#{ title }</a></dd>'
+            });
+        }, 500);
+    });    
+
+ </script>  
+
+
+    <div id="ad_cen">        
+<div class="J_adv" data-view="true" data-mod="ad_popu_71" data-mtp="43" data-order="114" data-con="ad_content_671" style="width: 728px; height: 90px;"><script src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-8990951720398508" data-ad-slot="8267689356/3115746762"></ins><script>(adsbygoogle=window.adsbygoogle || []).push({});</script></div>    </div>  
+
+    <!-- 广告位开始 -->
+    <div class="J_adv" data-view="true" data-mod="ad_popu_72" data-mtp="61" data-order="114" data-con="ad_content_1937"><script id="popuLayer_js_q" src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/popuLayer.js" defer="" type="text/javascript"></script><div id="location_parent_google"></div><script src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/adsbygoogle.js"></script><div id="layerd_google" style="position: fixed; bottom: 0px; right: 0px; line-height: 0px; z-index: 1000; width: 302px; height: 275px;"><div class="J_close layer_close" style="display:;background-color:#efefef;padding:0px;color:#333;font:12px/24px Helvetica,Tahoma,Arial,sans-serif;text-align:right;">关闭</div><ins class="adsbygoogle" style="display:inline-block;width:300px;height:250px" data-ad-client="ca-pub-8990951720398508" data-ad-slot="8267689356/2658895482"> </ins></div><script>(adsbygoogle=window.adsbygoogle || []).push({});</script><script>  document.getElementById('popuLayer_js_q').onload=function(){      var styObjd=styObj={width:'302px',height:'275px'};window.CSDN.Layer.PopuLayer('#layerd_google',{storageName:'layerd',styleObj:styObjd,total:50,expoire:1000*60});  }</script></div>
+    <!-- 广告位结束 -->
+
+<div class="comment_class">
+    <div id="comment_title" class="panel_head">
+        <span class="see_comment">查看评论</span><a name="comments"></a></div>
+    <div id="comment_list"><br>&nbsp;&nbsp;暂无评论<br><br><div class="clear"></div></div>
+    <div id="comment_bar">
+    </div>
+    <div id="comment_form"><div class="notice">该文章已被禁止评论！</div></div>
+    <div class="announce">
+        * 以上用户言论只代表其个人观点，不代表CSDN网站的观点或立场<a name="reply"></a><a name="quote"></a></div>
+</div>
+
+<script type="text/javascript">
+    var fileName = '7852392';
+    var commentscount = 0;
+    var islock = true
+</script>
+<script type="text/javascript" src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/comment.js"></script>
+    <div id="ad_bot">
+    </div>
+<div id="report_dialog">
+</div>
+
+<div id="d-top" style="bottom:60px;">
+
+        <script type="text/javascript">
+            $(function(){
+                setTimeout(function(){
+                    $("#com-quick-reply").hide();
+                },300);   
+            });    
+        </script>
+    <a id="d-top-a" class="btn btn-top backtop" style="display: none;" title="返回顶部" onclick="_gaq.push([&#39;_trackEvent&#39;,&#39;function&#39;, &#39;onclick&#39;, &#39;blog_articles_huidaodingbu&#39;])">         
+         <img src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/top.png" alt="TOP">
+    </a>
+</div>
+<script type="text/javascript">
+    $(function ()
+    {
+        $("#ad_frm_0").height("90px");
+        
+        setTimeout(function(){
+            $("#ad_frm_2").height("200px");
+        },1000);    
+    });
+  
+</script>
+<style type="text/css">
+    .tag_list
+    {
+        background: none repeat scroll 0 0 #FFFFFF;
+        border: 1px solid #D7CBC1;
+        color: #000000;
+        font-size: 12px;
+        line-height: 20px;
+        list-style: none outside none;
+        margin: 10px 2% 0 1%;
+        padding: 1px;
+    }
+    .tag_list h5
+    {
+        background: none repeat scroll 0 0 #E0DBD3;
+        color: #47381C;
+        font-size: 12px;
+        height: 24px;
+        line-height: 24px;
+        padding: 0 5px;
+        margin: 0;
+    }
+    .tag_list h5 a
+    {
+        color: #47381C;
+    }
+    .classify
+    {
+        margin: 10px 0;
+        padding: 4px 12px 8px;
+    }
+    .classify a
+    {
+        margin-right: 20px;
+        white-space: nowrap;
+    }
+</style>
+
+
+<div class="tag_list" style="">
+
+    <h5>
+        <a href="http://www.csdn.net/tag/" target="_blank">核心技术类目</a></h5>
+    <div class="classify">
+<a title="全部主题" href="http://www.csdn.net/tag" target="_blank" onclick="LogClickCount(this,336);">全部主题</a>
+<a title="Hadoop" href="http://g.csdn.net/5272865" target="_blank" onclick="LogClickCount(this,336);">Hadoop</a>
+<a title="AWS" href="http://g.csdn.net/5272866" target="_blank" onclick="LogClickCount(this,336);">AWS</a>
+<a title="移动游戏" href="http://g.csdn.net/5272870" target="_blank" onclick="LogClickCount(this,336);">移动游戏</a>
+<a title="Java" href="http://g.csdn.net/5272871" target="_blank" onclick="LogClickCount(this,336);">Java</a>
+<a title="Android" href="http://g.csdn.net/5272872" target="_blank" onclick="LogClickCount(this,336);">Android</a>
+<a title="iOS" href="http://g.csdn.net/5272873" target="_blank" onclick="LogClickCount(this,336);">iOS</a>
+<a title="Swift" href="http://g.csdn.net/5272868" target="_blank" onclick="LogClickCount(this,336);">Swift</a>
+<a title="智能硬件" href="http://g.csdn.net/5272869" target="_blank" onclick="LogClickCount(this,336);">智能硬件</a>
+<a title="Docker" href="http://g.csdn.net/5272867" target="_blank" onclick="LogClickCount(this,336);">Docker</a>
+<a title="OpenStack" href="http://g.csdn.net/5272925" target="_blank" onclick="LogClickCount(this,336);">OpenStack</a>
+<a title="VPN" href="http://www.csdn.net/tag/vpn" target="_blank" onclick="LogClickCount(this,336);">VPN</a>
+<a title="Spark" href="http://g.csdn.net/5272924" target="_blank" onclick="LogClickCount(this,336);">Spark</a>
+<a title="ERP" href="http://www.csdn.net/tag/erp" target="_blank" onclick="LogClickCount(this,336);">ERP</a>
+<a title="IE10" href="http://www.csdn.net/tag/ie10" target="_blank" onclick="LogClickCount(this,336);">IE10</a>
+<a title="Eclipse" href="http://www.csdn.net/tag/eclipse" target="_blank" onclick="LogClickCount(this,336);">Eclipse</a>
+<a title="CRM" href="http://www.csdn.net/tag/crm" target="_blank" onclick="LogClickCount(this,336);">CRM</a>
+<a title="JavaScript" href="http://www.csdn.net/tag/javascript" target="_blank" onclick="LogClickCount(this,336);">JavaScript</a>
+<a title="数据库" href="http://www.csdn.net/tag/%E6%95%B0%E6%8D%AE%E5%BA%93" target="_blank" onclick="LogClickCount(this,336);">数据库</a>
+<a title="Ubuntu" href="http://www.csdn.net/tag/ubuntu" target="_blank" onclick="LogClickCount(this,336);">Ubuntu</a>
+<a title="NFC" href="http://www.csdn.net/tag/nfc" target="_blank" onclick="LogClickCount(this,336);">NFC</a>
+<a title="WAP" href="http://www.csdn.net/tag/wap" target="_blank" onclick="LogClickCount(this,336);">WAP</a>
+<a title="jQuery" href="http://www.csdn.net/tag/jquery" target="_blank" onclick="LogClickCount(this,336);">jQuery</a>
+<a title="BI" href="http://www.csdn.net/tag/bi" target="_blank" onclick="LogClickCount(this,336);">BI</a>
+<a title="HTML5" href="http://www.csdn.net/tag/html5" target="_blank" onclick="LogClickCount(this,336);">HTML5</a>
+<a title="Spring" href="http://www.csdn.net/tag/spring" target="_blank" onclick="LogClickCount(this,336);">Spring</a>
+<a title="Apache" href="http://www.csdn.net/tag/apache" target="_blank" onclick="LogClickCount(this,336);">Apache</a>
+<a title=".NET" href="http://www.csdn.net/tag/.net" target="_blank" onclick="LogClickCount(this,336);">.NET</a>
+<a title="API" href="http://www.csdn.net/tag/api" target="_blank" onclick="LogClickCount(this,336);">API</a>
+<a title="HTML" href="http://www.csdn.net/tag/html" target="_blank" onclick="LogClickCount(this,336);">HTML</a>
+<a title="SDK" href="http://www.csdn.net/tag/sdk" target="_blank" onclick="LogClickCount(this,336);">SDK</a>
+<a title="IIS" href="http://www.csdn.net/tag/iis" target="_blank" onclick="LogClickCount(this,336);">IIS</a>
+<a title="Fedora" href="http://www.csdn.net/tag/fedora" target="_blank" onclick="LogClickCount(this,336);">Fedora</a>
+<a title="XML" href="http://www.csdn.net/tag/xml" target="_blank" onclick="LogClickCount(this,336);">XML</a>
+<a title="LBS" href="http://www.csdn.net/tag/lbs" target="_blank" onclick="LogClickCount(this,336);">LBS</a>
+<a title="Unity" href="http://www.csdn.net/tag/unity" target="_blank" onclick="LogClickCount(this,336);">Unity</a>
+<a title="Splashtop" href="http://www.csdn.net/tag/splashtop" target="_blank" onclick="LogClickCount(this,336);">Splashtop</a>
+<a title="UML" href="http://www.csdn.net/tag/uml" target="_blank" onclick="LogClickCount(this,336);">UML</a>
+<a title="components" href="http://www.csdn.net/tag/components" target="_blank" onclick="LogClickCount(this,336);">components</a>
+<a title="Windows Mobile" href="http://www.csdn.net/tag/windowsmobile" target="_blank" onclick="LogClickCount(this,336);">Windows Mobile</a>
+<a title="Rails" href="http://www.csdn.net/tag/rails" target="_blank" onclick="LogClickCount(this,336);">Rails</a>
+<a title="QEMU" href="http://www.csdn.net/tag/qemu" target="_blank" onclick="LogClickCount(this,336);">QEMU</a>
+<a title="KDE" href="http://www.csdn.net/tag/kde" target="_blank" onclick="LogClickCount(this,336);">KDE</a>
+<a title="Cassandra" href="http://www.csdn.net/tag/cassandra" target="_blank" onclick="LogClickCount(this,336);">Cassandra</a>
+<a title="CloudStack" href="http://www.csdn.net/tag/cloudstack" target="_blank" onclick="LogClickCount(this,336);">CloudStack</a>
+<a title="FTC" href="http://www.csdn.net/tag/ftc" target="_blank" onclick="LogClickCount(this,336);">FTC</a>
+<a title="coremail" href="http://www.csdn.net/tag/coremail" target="_blank" onclick="LogClickCount(this,336);">coremail</a>
+<a title="OPhone " href="http://www.csdn.net/tag/ophone" target="_blank" onclick="LogClickCount(this,336);">OPhone </a>
+<a title="CouchBase" href="http://www.csdn.net/tag/couchbase" target="_blank" onclick="LogClickCount(this,336);">CouchBase</a>
+<a title="云计算" href="http://www.csdn.net/tag/%E4%BA%91%E8%AE%A1%E7%AE%97" target="_blank" onclick="LogClickCount(this,336);">云计算</a>
+<a title="iOS6" href="http://www.csdn.net/tag/iOS6" target="_blank" onclick="LogClickCount(this,336);">iOS6</a>
+<a title="Rackspace " href="http://www.csdn.net/tag/rackspace" target="_blank" onclick="LogClickCount(this,336);">Rackspace </a>
+<a title="Web App" href="http://www.csdn.net/tag/webapp" target="_blank" onclick="LogClickCount(this,336);">Web App</a>
+<a title="SpringSide" href="http://www.csdn.net/tag/springside" target="_blank" onclick="LogClickCount(this,336);">SpringSide</a>
+<a title="Maemo" href="http://www.csdn.net/tag/maemo" target="_blank" onclick="LogClickCount(this,336);">Maemo</a>
+<a title="Compuware" href="http://www.csdn.net/tag/compuware" target="_blank" onclick="LogClickCount(this,336);">Compuware</a>
+<a title="大数据" href="http://www.csdn.net/tag/%E5%A4%A7%E6%95%B0%E6%8D%AE" target="_blank" onclick="LogClickCount(this,336);">大数据</a>
+<a title="aptech" href="http://www.csdn.net/tag/aptech" target="_blank" onclick="LogClickCount(this,336);">aptech</a>
+<a title="Perl" href="http://www.csdn.net/tag/perl" target="_blank" onclick="LogClickCount(this,336);">Perl</a>
+<a title="Tornado" href="http://www.csdn.net/tag/tornado" target="_blank" onclick="LogClickCount(this,336);">Tornado</a>
+<a title="Ruby" href="http://www.csdn.net/tag/ruby" target="_blank" onclick="LogClickCount(this,336);">Ruby</a>
+<a title="Hibernate" href="http://www.csdn.net/hibernate" target="_blank" onclick="LogClickCount(this,336);">Hibernate</a>
+<a title="ThinkPHP" href="http://www.csdn.net/tag/thinkphp" target="_blank" onclick="LogClickCount(this,336);">ThinkPHP</a>
+<a title="HBase" href="http://www.csdn.net/tag/hbase" target="_blank" onclick="LogClickCount(this,336);">HBase</a>
+<a title="Pure" href="http://www.csdn.net/tag/pure" target="_blank" onclick="LogClickCount(this,336);">Pure</a>
+<a title="Solr" href="http://www.csdn.net/tag/solr" target="_blank" onclick="LogClickCount(this,336);">Solr</a>
+<a title="Angular" href="http://www.csdn.net/tag/angular" target="_blank" onclick="LogClickCount(this,336);">Angular</a>
+<a title="Cloud Foundry" href="http://www.csdn.net/tag/cloudfoundry" target="_blank" onclick="LogClickCount(this,336);">Cloud Foundry</a>
+<a title="Redis" href="http://www.csdn.net/tag/redis" target="_blank" onclick="LogClickCount(this,336);">Redis</a>
+<a title="Scala" href="http://www.csdn.net/tag/scala" target="_blank" onclick="LogClickCount(this,336);">Scala</a>
+<a title="Django" href="http://www.csdn.net/tag/django" target="_blank" onclick="LogClickCount(this,336);">Django</a>
+<a title="Bootstrap" href="http://www.csdn.net/tag/bootstrap" target="_blank" onclick="LogClickCount(this,336);">Bootstrap</a>
+    </div>
+
+</div>
+  <script language="javascript" type="text/javascript">     
+      $(function(){
+              setTimeout(function(){
+                  $.get("/S1234567_89/svc/GetTagContent",function(data){
+                      $(".tag_list").html(data).show();
+                  });     
+              });
+          },500);                       
+ </script> 
+
+
+<div id="pop_win" style="display:none ;position: absolute; z-index: 10000; border: 1px solid rgb(220, 220, 220); top: 222.5px; left: 630px; opacity: 1; background: none 0px 0px repeat scroll rgb(255, 255, 255);">
+    
+</div>
+<div id="popup_mask"></div>
+<style>
+    #popup_mask
+    {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: #000;
+        z-index: 9999;
+        left: 0px;
+        top: 0px;
+        opacity: 0.3;
+        filter: alpha(opacity=30);
+        display: none;
+    }
+
+</style>
+
+
+
+
+<script type="text/javascript">
+    $(function(){
+        setTimeout(function(){
+            $(".comment_body:contains('回复')").each(function(index,item){
+                var u=$(this).text().split('：')[0].toString().replace("回复","")
+                var thisComment=$(this);
+                if(u)
+                {
+                    $.getJSON("https://passport.csdn.net/get/nick?callback=?", {users: u}, function(a) {
+                        if(a!=null&&a.data!=null&&a.data.length>0)
+                        {
+                            nick=a.data[0].n; 
+                            if(u!=nick)
+                            {
+                                thisComment.text(thisComment.text().replace(u,nick));  
+                            }
+                        }       
+                    });  
+                }
+            });         
+
+        },200);  
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },5000);
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },10000);
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },15000);
+        
+        setTimeout(function(){
+            $("a img[src='http://js.tongji.linezing.com/stats.gif']").parent().css({"position":"absolute","left":"50%"});
+        },300);
+    });
+
+    function loginbox(){
+        var $logpop=$("#pop_win");
+        $logpop.html('<iframe src="https://passport.csdn.net/account/loginbox?service=http://static.blog.csdn.net/callback.htm" frameborder="0" height="600" width="400" scrolling="no"></iframe>');
+
+        $('#popup_mask').css({
+            opacity: 0.5,
+            width: $( document ).width() + 'px',
+            height:  $( document ).height() + 'px'
+        });
+        $('#popup_mask').css("display","block");
+ 
+        $logpop.css( {
+            top: ($( window ).height() - $logpop.height())/ 2  + $( window 
+       ).scrollTop() + 'px',
+            left:($( window ).width() - $logpop.width())/ 2
+        } );
+ 
+        setTimeout( function () {
+            $logpop.show();
+            $logpop.css( {
+                opacity: 1
+            } );
+        }, 200 );
+ 
+        $('#popup_mask').unbind("click");
+        $('#popup_mask').bind("click", function(){
+            $('#popup_mask').hide();
+            var $clopop = $("#pop_win");
+            $("#common_ask_div_sc").css("display","none");
+            $clopop.css( {
+                opacity: 0
+            } );
+            setTimeout( function () {
+                $clopop.hide();
+            }, 350 );
+            return false;
+        });
+    }   
+
+</script>
+ <script language="javascript" type="text/javascript" src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/async_new.js"></script>      
+
+
+
+
+                        <div class="clear">
+                        </div>
+                    </div>                   
+                
+            </div>
+                   
+           <div id="side">
+               
+    <div class="side">
+<div id="panel_Profile" class="panel">
+<ul class="panel_head"><span>个人资料</span></ul>
+<ul class="panel_body profile">
+<div id="blog_userface">
+    <a href="http://my.csdn.net/S1234567_89" target="_blank">
+    <img src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/1_s1234567_89.jpg" title="访问我的空间" style="max-width:90%">
+    </a>
+    <br>
+    <span><a href="http://my.csdn.net/S1234567_89" class="user_name" target="_blank">S1234567_89</a></span>
+</div>
+<div class="interact">
+
+    <a href="javascript:void(0);" class="attent" id="span_add_follow" title="[加关注]"></a>
+
+ <a href="javascript:void(0);" class="letter" title="[发私信]" onclick="window.open(&#39;http://msg.csdn.net/letters/model?receiver=S1234567_89&#39;,&#39;_blank&#39;,&#39;height=350,width=700&#39;);_gaq.push([&#39;_trackEvent&#39;,&#39;function&#39;, &#39;onclick&#39;, &#39;blog_articles_sixin&#39;])"></a>  
+</div>
+<div id="blog_medal">
+                <div id="bms_box">
+               </div>
+</div>
+<ul id="blog_rank">
+    <li>访问：<span>131723次</span></li>
+    <li>积分：<span>1612</span> </li>    
+    <li>等级： <span style="position:relative;display:inline-block;z-index:1">
+            <img src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/blog4.png" alt="" style="vertical-align: middle;" id="leveImg">
+            <div id="smallTittle" style=" position: absolute;  left: -24px;  top: 25px;  text-align: center;  width: 101px;  height: 32px;  background-color: #fff;  line-height: 32px;  border: 2px #DDDDDD solid;  box-shadow: 0px 2px 2px rgba (0,0,0,0.1);  display: none;   z-index: 999;">
+            <div style="left: 42%;  top: -8px;  position: absolute;  width: 0;  height: 0;  border-left: 10px solid transparent;  border-right: 10px solid transparent;  border-bottom: 8px solid #EAEAEA;"></div>
+            积分：1612 </div>
+        </span>  </li>
+    <li>排名：<span>千里之外</span></li>
+</ul>
+<ul id="blog_statistics">
+    <li>原创：<span>9篇</span></li>
+    <li>转载：<span>151篇</span></li>
+    <li>译文：<span>0篇</span></li>
+    <li>评论：<span>3条</span></li>
+</ul>
+</ul>
+</div>
+
+
+<div class="panel" id="panel_Search">
+    <ul class="panel_head"><span>文章搜索</span></ul>
+    <ul class="panel_body">
+        <form id="frmSearch" action="http://so.csdn.net/search" class="form_search" target="_blank">
+        <span><input id="inputSearch" type="text" class="blogsearch" title="请输入关键字"></span>
+        <input id="btnSubmit" type="button" value="搜索" title="search in blog">
+        <input type="hidden" name="q" id="inputQ">
+        <input type="hidden" name="t" value="blog">
+        <a id="btnSearchBlog" target="_blank"></a>
+        </form>
+    </ul>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $("#btnSubmit").click(function () {           
+            search();
+        });
+
+        $("#frmSearch").submit(function () {
+            search();
+            return false;
+        });
+
+        function search()
+        {
+            var url = "http://so.csdn.net/so/search/s.do?q=" + encodeURIComponent($("#inputSearch").val()) + "&u=" + username + "&t=blog";
+            window.location.href = url;
+        }   
+    });
+</script><div id="panel_Category" class="panel">
+<ul class="panel_head"><span>文章分类</span></ul>
+<ul class="panel_body">    
+                 <li>
+                    <a href="http://blog.csdn.net/S1234567_89/article/category/1207289" onclick="_gaq.push([&#39;_trackEvent&#39;,&#39;function&#39;, &#39;onclick&#39;, &#39;blog_articles_wenzhangfenlei&#39;]); ">Python</a><span>(55)</span>
+                </li>
+                 <li>
+                    <a href="http://blog.csdn.net/S1234567_89/article/category/1207299" onclick="_gaq.push([&#39;_trackEvent&#39;,&#39;function&#39;, &#39;onclick&#39;, &#39;blog_articles_wenzhangfenlei&#39;]); ">网络安全</a><span>(8)</span>
+                </li>
+                 <li>
+                    <a href="http://blog.csdn.net/S1234567_89/article/category/1211842" onclick="_gaq.push([&#39;_trackEvent&#39;,&#39;function&#39;, &#39;onclick&#39;, &#39;blog_articles_wenzhangfenlei&#39;]); ">编程</a><span>(40)</span>
+                </li>
+                 <li>
+                    <a href="http://blog.csdn.net/S1234567_89/article/category/1211844" onclick="_gaq.push([&#39;_trackEvent&#39;,&#39;function&#39;, &#39;onclick&#39;, &#39;blog_articles_wenzhangfenlei&#39;]); ">互联网应用</a><span>(8)</span>
+                </li>
+                 <li>
+                    <a href="http://blog.csdn.net/S1234567_89/article/category/1211846" onclick="_gaq.push([&#39;_trackEvent&#39;,&#39;function&#39;, &#39;onclick&#39;, &#39;blog_articles_wenzhangfenlei&#39;]); ">杂项学习</a><span>(7)</span>
+                </li>
+                 <li>
+                    <a href="http://blog.csdn.net/S1234567_89/article/category/1211849" onclick="_gaq.push([&#39;_trackEvent&#39;,&#39;function&#39;, &#39;onclick&#39;, &#39;blog_articles_wenzhangfenlei&#39;]); ">数据库</a><span>(3)</span>
+                </li>
+                 <li>
+                    <a href="http://blog.csdn.net/S1234567_89/article/category/6100312" onclick="_gaq.push([&#39;_trackEvent&#39;,&#39;function&#39;, &#39;onclick&#39;, &#39;blog_articles_wenzhangfenlei&#39;]); ">docker</a><span>(31)</span>
+                </li>
+                 <li>
+                    <a href="http://blog.csdn.net/S1234567_89/article/category/6129639" onclick="_gaq.push([&#39;_trackEvent&#39;,&#39;function&#39;, &#39;onclick&#39;, &#39;blog_articles_wenzhangfenlei&#39;]); ">varnish</a><span>(12)</span>
+                </li>
+</ul>
+</div><div id="panel_Archive" class="panel">
+<ul class="panel_head"><span>文章存档</span></ul>
+<ul class="panel_body">
+<div id="archive_list"><li><a href="http://blog.csdn.net/S1234567_89/article/month/2016/12">2016年12月</a><span>(4)</span></li><li><a href="http://blog.csdn.net/S1234567_89/article/month/2016/11">2016年11月</a><span>(14)</span></li><li><a href="http://blog.csdn.net/S1234567_89/article/month/2016/10">2016年10月</a><span>(5)</span></li><li><a href="http://blog.csdn.net/S1234567_89/article/month/2016/09">2016年09月</a><span>(16)</span></li><li><a href="http://blog.csdn.net/S1234567_89/article/month/2016/07">2016年07月</a><span>(12)</span></li><span class="hidelist" style="display:none;"><li><a href="http://blog.csdn.net/S1234567_89/article/month/2016/06">2016年06月</a><span>(10)</span></li><li><a href="http://blog.csdn.net/S1234567_89/article/month/2016/05">2016年05月</a><span>(3)</span></li><li><a href="http://blog.csdn.net/S1234567_89/article/month/2016/04">2016年04月</a><span>(19)</span></li><li><a href="http://blog.csdn.net/S1234567_89/article/month/2016/03">2016年03月</a><span>(13)</span></li><li><a href="http://blog.csdn.net/S1234567_89/article/month/2016/02">2016年02月</a><span>(14)</span></li><li><a href="http://blog.csdn.net/S1234567_89/article/month/2014/12">2014年12月</a><span>(4)</span></li><li><a href="http://blog.csdn.net/S1234567_89/article/month/2013/08">2013年08月</a><span>(1)</span></li><li><a href="http://blog.csdn.net/S1234567_89/article/month/2013/07">2013年07月</a><span>(4)</span></li><li><a href="http://blog.csdn.net/S1234567_89/article/month/2013/06">2013年06月</a><span>(3)</span></li><li><a href="http://blog.csdn.net/S1234567_89/article/month/2012/10">2012年10月</a><span>(7)</span></li><li><a href="http://blog.csdn.net/S1234567_89/article/month/2012/09">2012年09月</a><span>(6)</span></li><li><a href="http://blog.csdn.net/S1234567_89/article/month/2012/08">2012年08月</a><span>(30)</span></li></span><div id="archive_list_button" class="list_closed">展开</div></div>
+</ul>
+</div>
+<div id="hotarticls" class="panel">
+<ul class="panel_head">
+    <span>       
+阅读排行    </span>
+</ul>
+
+<ul class="panel_body itemlist">
+<li>
+<a href="http://blog.csdn.net/s1234567_89/article/details/7852392" title="linux下gdb单步调试">linux下gdb单步调试</a><span>(16417)</span>
+</li>
+<li>
+<a href="http://blog.csdn.net/s1234567_89/article/details/9240617" title="EasyUI 动态添加tabs">EasyUI 动态添加tabs</a><span>(11505)</span>
+</li>
+<li>
+<a href="http://blog.csdn.net/s1234567_89/article/details/7916325" title="DECLARE_WAITQUEUE 将进程加入等待队列">DECLARE_WAITQUEUE 将进程加入等待队列</a><span>(6118)</span>
+</li>
+<li>
+<a href="http://blog.csdn.net/s1234567_89/article/details/7915224" title="Linux VFS文件系统之读写(read/write)文件">Linux VFS文件系统之读写(read/write)文件</a><span>(5559)</span>
+</li>
+<li>
+<a href="http://blog.csdn.net/s1234567_89/article/details/41799841" title="夫妻两有厦门户口本，但是父母是外地户口并且没有厦门社保卡，改如何登陆鼓浪屿呢？">夫妻两有厦门户口本，但是父母是外地户口并且没有厦门社保卡，改如何登陆鼓浪屿呢？</a><span>(4458)</span>
+</li>
+<li>
+<a href="http://blog.csdn.net/s1234567_89/article/details/7872961" title="解决vi中文乱码问题">解决vi中文乱码问题</a><span>(4439)</span>
+</li>
+<li>
+<a href="http://blog.csdn.net/s1234567_89/article/details/8053075" title="搭建GlusterFS集群-Distributed Volumes">搭建GlusterFS集群-Distributed Volumes</a><span>(4162)</span>
+</li>
+<li>
+<a href="http://blog.csdn.net/s1234567_89/article/details/8094283" title="CentOS 安装内核源代码">CentOS 安装内核源代码</a><span>(3487)</span>
+</li>
+<li>
+<a href="http://blog.csdn.net/s1234567_89/article/details/50698111" title="Docker基础镜像-从iso到image">Docker基础镜像-从iso到image</a><span>(3190)</span>
+</li>
+<li>
+<a href="http://blog.csdn.net/s1234567_89/article/details/8053204" title="调整volume的参数">调整volume的参数</a><span>(3174)</span>
+</li>
+</ul>
+</div>
+<div id="hotarticls2" class="panel">
+<ul class="panel_head"><span>评论排行</span></ul>
+<ul class="panel_body itemlist">
+<li>
+<a href="http://blog.csdn.net/s1234567_89/article/details/7916325" title="DECLARE_WAITQUEUE 将进程加入等待队列">DECLARE_WAITQUEUE 将进程加入等待队列</a><span>(1)</span>
+</li>
+<li>
+<a href="http://blog.csdn.net/s1234567_89/article/details/7916951" title="关于list_entry">关于list_entry</a><span>(1)</span>
+</li>
+<li>
+<a href="http://blog.csdn.net/s1234567_89/article/details/50767108" title="Pycharm设置">Pycharm设置</a><span>(1)</span>
+</li>
+<li>
+<a href="http://blog.csdn.net/s1234567_89/article/details/7865542" title="fuse的一些理解-备忘">fuse的一些理解-备忘</a><span>(0)</span>
+</li>
+<li>
+<a href="http://blog.csdn.net/s1234567_89/article/details/7852392" title="linux下gdb单步调试">linux下gdb单步调试</a><span>(0)</span>
+</li>
+<li>
+<a href="http://blog.csdn.net/s1234567_89/article/details/53784289" title="部署k8s-dashboard">部署k8s-dashboard</a><span>(0)</span>
+</li>
+<li>
+<a href="http://blog.csdn.net/s1234567_89/article/details/7850692" title="《互联网运营智慧》随书视频">《互联网运营智慧》随书视频</a><span>(0)</span>
+</li>
+<li>
+<a href="http://blog.csdn.net/s1234567_89/article/details/7850527" title="几个受益终身的英文缩写">几个受益终身的英文缩写</a><span>(0)</span>
+</li>
+<li>
+<a href="http://blog.csdn.net/s1234567_89/article/details/7844243" title="C++和C优质资料">C++和C优质资料</a><span>(0)</span>
+</li>
+<li>
+<a href="http://blog.csdn.net/s1234567_89/article/details/7844215" title="【SQLServer】127个SQL server热门资料汇总">【SQLServer】127个SQL server热门资料汇总</a><span>(0)</span>
+</li>
+</ul>
+</div>
+<div id="homepageArticles" class="panel tracking-ad" data-mod="popu_4">
+<ul class="panel_head"><span>推荐文章</span></ul>
+<ul class="panel_body" id="ad_commend">
+<ul>
+<li><a href="http://blog.csdn.net/laoyang360/article/details/53843771" target="_blank">* 而立之年——三线城市程序员的年终告白</a></li>
+<li><a href="http://blog.csdn.net/sdkfjksf/article/details/54380659" target="_blank">* Java集合框架中隐藏的设计套路</a></li>
+<li><a href="http://blog.csdn.net/jiangwei0910410003/article/details/54092364" target="_blank">* Python脚本下载今日头条视频(附加Android版本辅助下载器)</a></li>
+<li><a href="http://blog.csdn.net/caowenbin/article/details/54406716" target="_blank">* 人工智能的冷思考</a></li>
+<li><a href="http://blog.csdn.net/it_talk/article/details/54346566" target="_blank">* React Native 实战系列教程之热更新原理分析与实现</a></li>
+
+
+</ul></ul>
+</div>
+
+
+<div id="newcomments" class="panel">
+<ul class="panel_head"><span>最新评论</span></ul>
+<ul class="panel_body itemlist">
+    <li>
+   
+         <a href="http://blog.csdn.net/s1234567_89/article/details/50767108#comments">Pycharm设置</a>
+    <p style="margin:0px;"><a href="http://blog.csdn.net/NNNNNNNNNNNNY" class="user_name">NodYoung</a>:
+多谢多谢，每次出现问题都会查看你的这篇博客
+    </p>
+    </li>
+    <li>
+   
+         <a href="http://blog.csdn.net/s1234567_89/article/details/7916325#comments">DECLARE_WAITQUEUE 将进程加入等待队列</a>
+    <p style="margin:0px;"><a href="http://blog.csdn.net/aweyiun" class="user_name">aweyiun</a>:
+私以为之所以要在down(&amp;dev-&gt;sem)之后立即加入等待队列的原因在于：1、正如正文所说后面要...
+    </p>
+    </li>
+    <li>
+   
+         <a href="http://blog.csdn.net/s1234567_89/article/details/7916951#comments">关于list_entry</a>
+    <p style="margin:0px;"><a href="http://blog.csdn.net/maomaochong1989" class="user_name">talking</a>:
+写的挺好，希望以后博主再多出点，受教了，顶！
+    </p>
+    </li>
+</ul>
+</div>
+    </div>
+    <div class="clear">
+    </div>
+
+
+                   <!-- 广告位开始 --> 
+                    <div class="J_adv" data-view="true" data-mod="ad_popu_190" data-mtp="37" data-order="40" data-con="ad_content_1260" style="width: 200px; height: 200px;"><!-- 广告占位容器 --><div id="cpro_u2734128"><iframe id="iframeu2734128_0" src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/ecem.html" width="200" height="200" align="center,center" vspace="0" hspace="0" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" style="border:0; vertical-align:bottom;margin:0;" allowtransparency="true"></iframe></div><!-- 投放代码 --><script type="text/javascript">(window['cproStyleApi'] = window['cproStyleApi'] || {})['u2734128']={at:'3',rsi0:'200',rsi1:'200',pat:'17',tn:'baiduCustNativeAD',rss1:'#FFFFFF',conBW:'1',adp:'1',ptt:'0',titFF:'%E5%BE%AE%E8%BD%AF%E9%9B%85%E9%BB%91',titFS:'',rss2:'#000000',titSU:'0'};/*服务器频道首页置顶Banner960*90，创建于2014-7-3*/(window.cproArray = window.cproArray || []).push({id:'u2734128'});  </script>  <script src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/c.js" type="text/javascript"></script></div> 
+                    <!-- 广告位结束 -->
+
+           </div>   
+
+            <div class="clear">
+            </div>
+        </div>
+
+        
+
+<script type="text/javascript" src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/cnick.js"></script>
+<script type="text/javascript" src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/newblog.min.js"></script>
+
+
+<script type="text/javascript" src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/showblogmedal.ashx"></script>
+<script type="text/javascript" src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/JavaScript1.js"></script><link rel="stylesheet" type="text/css" href="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/pub_footer_2014.css"><div class="pub_fo"><div id="pub_footerall" class="pub_footer_new"><dl><dt></dt> <dd class="foot_sub_menu"><a href="http://www.csdn.net/company/about.html" target="_blank">公司简介</a><span>|</span><a href="http://www.csdn.net/company/recruit.html" target="_blank">招贤纳士</a><span>|</span><a href="http://www.csdn.net/company/marketing.html" target="_blank">广告服务</a><span>|</span><a href="http://www.csdn.net/company/contact.html" target="_blank">联系方式</a><span>|</span><a href="http://www.csdn.net/company/statement.html" target="_blank">版权声明</a><span>|</span><a href="http://www.csdn.net/company/layer.html" target="_blank">法律顾问</a><span>|</span><a href="mailto:webmaster@csdn.net">问题报告</a><span>|</span><a target="_blank" href="http://www.csdn.net/friendlink.html">合作伙伴</a><span>|</span><a href="http://bbs.csdn.net/forums/Service" target="_blank">论坛反馈</a></dd><dd class="foot_contact"><a href="javascript:void(0);" target="_blank" class="qq">网站客服</a><a href="http://wpa.qq.com/msgrd?v=3&amp;uin=2251809102&amp;site=qq&amp;menu=yes" target="_blank" class="qq">杂志客服</a><a href="http://e.weibo.com/csdnsupport/profile" target="_blank" class="weibo">微博客服</a><a href="mailto:webmaster@csdn.net" class="email" title="联系邮箱">webmaster@csdn.net</a><span class="phone" title="服务热线">400-600-2320</span><span class="interval">|</span><span>北京创新乐知信息技术有限公司 版权所有</span><span class="interval">|</span><span>江苏知之为计算机有限公司</span><span class="interval">|</span><span>江苏乐知网络技术有限公司</span></dd><dd class="foot_copyright"><span>京&nbsp;ICP&nbsp;证&nbsp;09002463&nbsp;号</span><span class="interval">|</span><span>Copyright © 1999-2016, CSDN.NET, All Rights Reserved&nbsp;</span><a href="http://www.hd315.gov.cn/beian/view.asp?bianhao=010202001032100010" target="_blank"><img src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/gongshang_logos.gif" alt="GongshangLogo" title=""></a></dd></dl></div></div><div id="note1" class="csdn_note" style="display:none; position:absolute; z-index:9999; width:440px">  <span class="notice_top_arrow"><span class="inner"></span></span>  <div class="box"></div></div><div class="csdn_notice_tip" style="display:none; position:absolute; z-index:9990; width:170px">  <iframe src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/saved_resource(1).html" frameborder="0" scrolling="no" style="z-index:-1;position:absolute;top:0;left:0;width:100%;height:100%;background:transparent"></iframe>  <div class="tip_text">您有<strong>0</strong>条新通知</div>  <a href="javascript:void 0" class="close2"></a></div><script id="noticeScript" type="text/javascript" btnid="header_notice_num" wrapid="note1" count="5" subcount="5" src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/notify.js"></script>
+
+    <script type="text/javascript" src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/login.js"></script>
+<script type="text/javascript">document.write("<img src=http://counter.csdn.net/pv.aspx?id=24 border=0 width=0 height=0>");</script><img src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/pv.aspx" border="0" width="0" height="0">
+<script type="text/javascript" src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/counter.js"></script><script type="text/javascript" charset="UTF-8" src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/msg.popup.js"></script>
+<script type="text/javascript" src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/ad-blog.js"></script>
+<script type="text/javascript">
+    $(function () {
+        function __get_code_toolbar(snippet_id) {
+            return $("<span class='tracking-ad' data-mod='popu_167'><a href='https://code.csdn.net/snippets/"
+                    + snippet_id
+                    + "' target='_blank' title='在CODE上查看代码片'  style='text-indent:0;'><img src='https://code.csdn.net/assets/CODE_ico.png' width=12 height=12 alt='在CODE上查看代码片' style='position:relative;top:1px;left:2px;'/></a></span>"
+                    + "<span class='tracking-ad' data-mod='popu_170'><a href='https://code.csdn.net/snippets/"
+                    + snippet_id
+                    + "/fork' target='_blank' title='派生到我的代码片' style='text-indent:0;'><img src='https://code.csdn.net/assets/ico_fork.svg' width=12 height=12 alt='派生到我的代码片' style='position:relative;top:2px;left:2px;'/></a></span>");
+        }
+        
+        $("[code_snippet_id]").each(function () {
+            __s_id = $(this).attr("code_snippet_id");
+            if (__s_id != null && __s_id != "" && __s_id != 0 && parseInt(__s_id) > 70020) {
+                __code_tool = __get_code_toolbar(__s_id);
+                $(this).prev().find(".tools").append(__code_tool);
+            }
+        });
+
+        $(".bar").show();
+    });
+</script>
+
+
+
+
+
+    </div><input type="hidden" id="aa_g_data_ids">
+      <!--new top-->
+    
+    <script id="csdn-toolbar-id" btnid="header_notice_num" wrapid="note1" count="5" subcount="5" type="text/javascript" src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/toolbar.js"></script>
+     <!--new top-->
+   
+    <link href="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/ask_float_block.css" type="text/css" rel="stylesheet">
+    <script language="JavaScript" type="text/javascript" src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/wmd.js"></script>
+    <script language="JavaScript" type="text/javascript" src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/showdown.js"></script>
+    <script language="JavaScript" type="text/javascript" src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/prettify.js"></script>
+    <script language="JavaScript" type="text/javascript" src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/ask_float_block.js"></script>
+   
+
+   
+
+  <div id="a52b5334d" style="width: 1px; height: 1px; display: none;">
+                    <script id="adJs52b5334" src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/52b5334.js"></script>
+                    <script>document.getElementById("adJs52b5334").src = "http://ads.csdn.net/js/opt/52b5334.js?t=" + Math.random();</script>
+   </div>
+
+    <link rel="stylesheet" href="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/blog_code.css">
+    <script type="text/javascript" src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/saveToCode.js"></script>
+      <script type="text/javascript" src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/main(1).js"></script>
+
+     <link rel="stylesheet" href="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/fa.css">
+
+    <div class="pop_CA_cover" style="display:none"></div>
+    <div class="pop pop_CA" style="display:none">
+          <div class="CA_header">
+            收藏助手
+            <span class="cancel_icon" id="fapancle" onclick="$(&#39;.pop_CA&#39;).hide();$(&#39;.pop_CA_cover&#39;).hide();"></span>
+          </div>
+          <iframe src="" id="fa" frameborder="0" width="100%" height="360" scrolling="no">
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;   
+ </iframe></div><div id="tag-suggest-pop">
+  <div class="relative">
+    <div class="close"></div>
+    <div class="content"></div>
+  </div>
+</div><link rel="stylesheet" type="text/css" media="screen" href="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/ask_float_fonts_css-6b30a53970eb5c3a2a045e3df585b475.css"><div data-mod="popu_64" class="csdn-tracking-statistics" chg-blk="0"><a id="com-quick-reply" title="快速回复" style="top: 433px; display: none;"></a><a id="com-quick-collect" title="我要收藏" style="top:471px"></a><a id="com-d-top-a" style="top: 509px; display: inline;" title="返回顶部" onclick=""></a> </div><div class="pop_edit ask_second comm_ask_second"><h3>提问</h3><span class="ask_float_span">您的问题将会被发布在“<a class="ask_float_channel" href="http://ask.csdn.net/" target="_blank" style="cursor:pointer">技术问答</a>”频道</span><a href="http://blog.csdn.net/s1234567_89/article/details/7852392#" nodetype="close" class="close">×</a><div class="context"><div class="err_div"><span class="err_ico"></span><span class="err_txt">该问题已存在，请勿重复提问</span></div><div class="input_div"><input id="askInputSecond" type="text" style="font-size:14px;" placeholder="问题标题"></div><div class="cm_box"><div class="cm_dialog"></div> <div class="pop_cm cm_add_link"><input type="text" placeholder="链接内容" id="af_cm_link_txt"><input type="text" placeholder="链接地址" id="af_cm_link_url"><input type="text" placeholder="链接提示" id="af_cm_link_tit"><div class="text-right"><span class="btn btn-default btn-sm" id="add_link_btn">插入链接</span> </div> </div><div class="pop_cm cm_add_img"><div class="nav-tabs"><a class="img_tab active" href="http://blog.csdn.net/s1234567_89/article/details/7852392#tab_upload">本地上传</a><a class="img_tab" href="http://blog.csdn.net/s1234567_89/article/details/7852392#tab_weburl">网络图片</a></div><div class="tab_panel active" id="tab_upload"><div class="set_img"><iframe src="./linux下gdb单步调试 - zhuangshu_feng&#39;‘每天进步一点点 - 博客频道 - CSDN.NET_files/upload.html"></iframe></div></div><div class="tab_panel" id="tab_weburl"><input type="text" placeholder="图片地址" id="af_cm_img_url"><input type="text" placeholder="图片说明" id="af_cm_img_alt"><div class="text-right"><span class="btn btn-default btn-sm" id="add_img_btn">插入图片</span> </div></div> </div></div> <textarea id="editor_all" rows="8" style="display: none;"></textarea><div class="editor-toolbar"><i class="separator">|</i><a class="icon-headline" title="标题一（Ctrl+Alt+1）"></a><a class="icon-heading" title="标题二（Ctrl+Alt+2）"></a><a class="icon-bold" title="粗体（Ctrl+B）"></a><a class="icon-italic" title="斜体（Ctrl+I）"></a><i class="separator">|</i><a class="icon-quote-left" title="引用（Ctrl+’）"></a><a class="icon-code" title="插入代码片（Ctrl+,）"></a><a class="icon-list-ul" title="无序列表（Ctrl+L）"></a><a class="icon-list-ol" title="有序列表（Ctrl+Alt+L）"></a><i class="separator">|</i><a class="icon-link" title="添加链接（Ctrl+K）"></a><a class="icon-picture" title="添加图片（Ctrl+Alt+I）"></a><i class="separator">|</i><a class="icon-reply" title="撤退（Ctrl+Z）"></a><a class="icon-share-alt" title="前进（Ctrl+Shift+Z）"></a><i class="separator">|</i><a class="icon-info" href="http://ask.csdn.net/pages/markdown" target="_blank" title="markdown语法参考"></a><a class="icon-preview" title="预览"></a><i class="separator">|</i></div><div class="CodeMirror cm-s-paper CodeMirror-focused"><div style="overflow: hidden; position: relative; width: 3px; height: 0px;"><textarea autocorrect="off" autocapitalize="off" spellcheck="false" style="position: absolute; padding: 0px; width: 1000px; height: 1em; outline: none; font-size: 4px;" tabindex="0"></textarea></div><div class="CodeMirror-hscrollbar"><div style="height: 1px;"></div></div><div class="CodeMirror-vscrollbar"><div style="width: 1px;"></div></div><div class="CodeMirror-scrollbar-filler"></div><div class="CodeMirror-gutter-filler"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="min-width: 33px;"><div style="position: relative;"><div class="CodeMirror-lines"><div style="position: relative; outline: none;"><div class="CodeMirror-measure"><pre>&nbsp;<span style="display: inline-block; width: 1px; margin-right: -1px;">&nbsp;</span></pre></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code"></div><div class="CodeMirror-cursor" style="visibility: hidden;">&nbsp;</div><div class="CodeMirror-cursor CodeMirror-secondarycursor" style="visibility: hidden;">&nbsp;</div></div></div></div></div><div style="position: absolute; height: 30px; width: 1px;"></div><div class="CodeMirror-gutters" style="display: none;"></div></div></div><div class="editor-statusbar"><span class="lines">0</span><span class="words">0</span><span class="cursor">0:0</span></div><div class="div_tags clearfix"><div id="divSearchTags" class="tags_con"><input type="text"></div><input type="hidden" name="txtSearchTags"></div><div id="ask2_tagRecomm_div" class="drt_tagRecomm tracking-ad" data-mod="popu_73"><span class="drt_tit">推荐标签：</span></div></div><div class="success"><div class="left_area"><input id="chk_cb" type="checkbox"><span class="wyxs">我要悬赏</span><input id="cb_num" class="cb_num" readonly="true"><span class="phib_rii"><span> 币</span></span></div><a href="http://blog.csdn.net/s1234567_89/article/details/7852392#" nodetype="cancel" class="cancel">取消</a><a href="http://blog.csdn.net/s1234567_89/article/details/7852392#" nodetype="ok" class="ok">发布</a></div></div><div id="common_ask_div_sc" class="searchContainer"><div class="sTitle">可能存在类似的问题：</div><div class="sFooter"><a class="sFirstNewAsk">我想提一个新问题</a></div></div><div id="mask_code"></div><div class="gist_edit"><div class="save_snippets clearfix"><div class="tit"><h3>保存代码片</h3><span>整理和分享保存的代码片，请访问<a href="https://code.csdn.net/snippets_manage" target="_blank">代码笔记</a></span></div><div class="con_form"><ul class="gist_edit_list clearfix"><li><span class="red">*</span><span class="txt">标题</span><input id="form_title" class="form-input" placeholder="linux下gdb单步调试" type="text"></li><li><span class="red">*</span><span class="txt">描述</span><textarea id="form-textarea" class="form-textarea" placeholder="linux下gdb单步调试： http://blog.csdn.net/s1234567_89/article/details/7852392"></textarea></li><li><span class="red">&nbsp;</span><span class="txt">标签</span><div id="divSearchTags"><span class="label blog_tag"><span>linux</span><a title="Removing tag" href="javascript:;">x</a></span><span class="label blog_tag"><span>程序调试工具</span><a title="Removing tag" href="javascript:;">x</a></span><span class="label blog_tag"><span>工具</span><a title="Removing tag" href="javascript:;">x</a></span><span class="label blog_tag"><span>图形</span><a title="Removing tag" href="javascript:;">x</a></span><span class="label blog_tag"><span>unix</span><a title="Removing tag" href="javascript:;">x</a></span><span class="label blog_tag"><span>化工</span><a title="Removing tag" href="javascript:;">x</a></span><input id="insertTag" class="insertTag" placeholder="请输入标签，按Enter生成(最多5项)" type="text" value="" name="insertTag" maxlength="21" style="color: rgb(51, 51, 51);"><input id="OrganTag" class="OrganTag" type="hidden" name="OrganTag" value="linux,程序调试工具,工具,图形,unix,化工,"><input id="OldOrganTag" class="OldOrganTag" type="hidden" name="OldOrganTag" value=""><input type="hidden" name="txtSearchTags"></div></li></ul></div><div class="bottom-bar"><a href="javascript:;" class="btn-submit btn-cancel">取消</a><span class="tracking-ad" data-mod="popu_250"><a class="btn-submit btn-confirm" href="javascript:;" target="_blank">确定</a></span></div></div></div></body></html>

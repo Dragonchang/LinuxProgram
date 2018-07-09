@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<!-- saved from url=(0063)http://www.cnblogs.com/xuxm2007/archive/2011/04/01/2002162.html -->
+<html lang="zh-cn"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><script src="./gdb 多线程调试 - 阿笨猫 - 博客园_files/ca-pub-4210569241504288.js"></script><script async="" src="./gdb 多线程调试 - 阿笨猫 - 博客园_files/analytics.js"></script>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>gdb 多线程调试 - 阿笨猫 - 博客园</title>
+<link type="text/css" rel="stylesheet" href="./gdb 多线程调试 - 阿笨猫 - 博客园_files/blog-common.css">
+<link id="MainCss" type="text/css" rel="stylesheet" href="./gdb 多线程调试 - 阿笨猫 - 博客园_files/bundle-sea.css">
+<link id="mobile-style" media="only screen and (max-width: 768px)" type="text/css" rel="stylesheet" href="./gdb 多线程调试 - 阿笨猫 - 博客园_files/bundle-sea-mobile.css">
+<link title="RSS" type="application/rss+xml" rel="alternate" href="http://www.cnblogs.com/xuxm2007/rss">
+<link title="RSD" type="application/rsd+xml" rel="EditURI" href="http://www.cnblogs.com/xuxm2007/rsd.xml">
+<link type="application/wlwmanifest+xml" rel="wlwmanifest" href="http://www.cnblogs.com/xuxm2007/wlwmanifest.xml">
+<script src="./gdb 多线程调试 - 阿笨猫 - 博客园_files/jquery.js" type="text/javascript"></script>  
+<script type="text/javascript">var currentBlogApp = 'xuxm2007', cb_enable_mathjax=false;var isLogined=false;</script>
+<script src="./gdb 多线程调试 - 阿笨猫 - 博客园_files/blog-common.js" type="text/javascript"></script>
+</head>
+<body>
+<a name="top"></a>
+
+<!--done-->
+<div id="header">
+	
+<!--done-->
+<div class="header">
+	<div class="headerText">
+		<a id="Header1_HeaderTitle" class="headermaintitle" href="http://www.cnblogs.com/xuxm2007/">阿笨猫的窝</a><br>
+		好记性不如烂笔头
+	</div>
+</div>
+
+</div>
+
+<div id="mytopmenu">
+	
+		<div id="mylinks"><a id="blog_nav_sitehome" class="menu" href="http://www.cnblogs.com/">博客园</a> &nbsp;
+<a id="blog_nav_myhome" class="menu" href="http://www.cnblogs.com/xuxm2007/">首页</a> &nbsp;
+<a id="blog_nav_newpost" class="menu" rel="nofollow" href="https://i.cnblogs.com/EditPosts.aspx?opt=1">新随笔</a> &nbsp;
+<a id="blog_nav_contact" class="menu" rel="nofollow" href="https://msg.cnblogs.com/send/%E9%98%BF%E7%AC%A8%E7%8C%AB">联系</a> &nbsp;
+<a id="blog_nav_rss" class="menu" href="http://www.cnblogs.com/xuxm2007/rss">订阅</a><a id="blog_nav_rss_image" href="http://www.cnblogs.com/xuxm2007/rss"><img src="./gdb 多线程调试 - 阿笨猫 - 博客园_files/xml.gif" alt="订阅"></a>&nbsp;
+<a id="blog_nav_admin" class="menu" rel="nofollow" href="https://i.cnblogs.com/">管理</a>
+</div>
+		<div id="mystats"><div id="blog_stats">
+随笔-238&nbsp;
+评论-12&nbsp;
+文章-0&nbsp;
+<!--trackbacks-0-->
+</div></div>
+	
+</div>
+<div id="centercontent">
+	
+<div id="post_detail">
+<div class="post">
+	<h1 class="postTitle"><a id="cb_post_title_url" class="postTitle2" href="http://www.cnblogs.com/xuxm2007/archive/2011/04/01/2002162.html">gdb 多线程调试</a></h1>
+	<div id="cnblogs_post_body"><div>http://hi.baidu.com/hcq11/blog/item/9f5bfc6e696209d680cb4a25.html&nbsp;</div><p>http://hi.baidu.com/litto/blog/item/759389dd198111375882dd1e.html&nbsp;</p><p>http://blogold.chinaunix.net/u3/94700/showart_2389432.html&nbsp; &nbsp;&lt;推荐阅读&gt;</p><p>&nbsp;</p><p>先介绍一下GDB多线程调试的基本命令。 </p><p><strong>info threads</strong>  显示当前可调试的所有线程，每个线程会有一个GDB为其分配的ID，后面操作线程的时候会用到这个ID。 前面有*的是当前调试的线程。 </p><p><strong>thread ID</strong> 切换当前调试的线程为指定ID的线程。 </p><p><strong>break thread_test.c:123 thread  all&nbsp;</strong>在所有线程中相应的行上设置断点</p><p><strong>thread apply ID1  ID2 command </strong>让一个或者多个线程执行GDB命令command。&nbsp;</p><p><strong>thread apply all command&nbsp;</strong>让所有被调试线程执行GDB命令command。 </p><p><strong>set scheduler-locking  off|on|step</strong>  估计是实际使用过多线程调试的人都可以发现，在使用step或者continue命令调试当前被调试线程的时候，其他线程也是同时执行的，怎么只让被调试程序执行呢？通过这个命令就可以实现这个需求。off  不锁定任何线程，也就是所有线程都执行，这是默认值。 on 只有当前被调试程序会执行。 step  在单步的时候，除了next过一个函数的情况(熟悉情况的人可能知道，这其实是一个设置断点然后continue的行为)以外，只有当前线程会执行。</p><p>&nbsp;</p><div><p></p><p>gdb对于多线程程序的调试有如下的支持：</p> <ul> <li>线程产生通知：在产生新的线程时, gdb会给出提示信息 </li></ul> <p>(gdb) r<br>Starting program: /root/thread <br>[New Thread 1073951360 (LWP  <span style="color: #008000; ">12900</span>)] <br>[New Thread 1082342592 (LWP 12907)]---<span style="color: #0000ff; ">以下三个为新产生的线程</span><br>[New Thread 1090731072 (LWP 12908)]<br>[New  Thread 1099119552 (LWP 12909)]</p> <ul> <li>查看线程：使用info threads可以查看运行的线程。 </li></ul> <p>(gdb) info threads<br>&nbsp;&nbsp;<span style="color: #0000ff; ">4 </span>Thread 1099119552 (LWP  12940)&nbsp;&nbsp; 0xffffe002 in ?? ()<br>&nbsp;&nbsp;<span style="color: #0000ff; ">3</span> Thread 1090731072 (LWP 12939)&nbsp;&nbsp; 0xffffe002 in ??  ()<br>&nbsp;&nbsp;<span style="color: #0000ff; ">2</span> Thread 1082342592 (LWP 12938)&nbsp;&nbsp; 0xffffe002  in ?? ()<br><span style="color: #ff0000; ">* </span><span style="color: #0000ff; ">1</span> Thread  1073951360 (LWP 12931)&nbsp;&nbsp; main (argc=1, argv=0xbfffda04) at  thread.c:21<br>(gdb)</p> <p>注意，行首的<span style="color: #0000ff; ">蓝色</span>文字为gdb分配的线程号，对线程进行切换时，使用该该号码，而不是上文标出的绿色数字。</p> <p>另外，行首的红色星号标识了当前活动的线程</p> <ul> <li>切换线程：使用<span style="color: #0000ff; "> thread THREADNUMBER</span> 进行切换，<span style="color: #0000ff; ">THREADNUMBER </span>为上文提到的线程号。下例显示将活动线程从 1 切换至  4。 </li></ul> <p>(gdb) info threads<br>&nbsp;&nbsp; 4 Thread 1099119552 (LWP 12940)&nbsp;&nbsp; 0xffffe002 in ??  ()<br>&nbsp;&nbsp; 3 Thread 1090731072 (LWP 12939)&nbsp;&nbsp; 0xffffe002 in ?? ()<br>&nbsp;&nbsp; 2 Thread  1082342592 (LWP 12938)&nbsp;&nbsp; 0xffffe002 in ?? ()<br>* 1 Thread 1073951360 (LWP  12931)&nbsp;&nbsp; main (argc=1, argv=0xbfffda04) at thread.c:21<br>(gdb) <span style="color: #0000ff; ">thread 4</span><br>[Switching to thread 4 (Thread 1099119552 (LWP  12940))]#0&nbsp;&nbsp; 0xffffe002 in ?? ()<br>(gdb) info threads<br>* 4 Thread 1099119552  (LWP 12940)&nbsp;&nbsp; 0xffffe002 in ?? ()<br>&nbsp;&nbsp; 3 Thread 1090731072 (LWP 12939)&nbsp;&nbsp;  0xffffe002 in ?? ()<br>&nbsp;&nbsp; 2 Thread 1082342592 (LWP 12938)&nbsp;&nbsp; 0xffffe002 in ??  ()<br>&nbsp;&nbsp; 1 Thread 1073951360 (LWP 12931)&nbsp;&nbsp; main (argc=1, argv=0xbfffda04) at  thread.c:21<br>(gdb)</p><p>&nbsp;</p><p>后面就是直接在你的线程函数里面设置断点,然后continue到那个断点,一般情况下多线程的时候,由于是同时运行的,最好设置&nbsp;<strong>set scheduler-locking on</strong></p><p>这样的话,只调试当前线程&nbsp;</p><p></p></div> </div><div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+<div id="BlogPostCategory">分类: <a href="http://www.cnblogs.com/xuxm2007/category/217480.html" target="_blank">C/C++</a></div>
+<div id="EntryTag">标签: <a href="http://www.cnblogs.com/xuxm2007/tag/debug/">debug</a>, <a href="http://www.cnblogs.com/xuxm2007/tag/gdb/">gdb</a>, <a href="http://www.cnblogs.com/xuxm2007/tag/thread/">thread</a></div>
+<div id="blog_post_info"><div id="green_channel">
+        <a href="javascript:void(0);" id="green_channel_digg" onclick="DiggIt(2002162,cb_blogId,1);green_channel_success(this,&#39;谢谢推荐！&#39;);">好文要顶</a>
+            <a id="green_channel_follow" onclick="follow(&#39;0802bff4-7460-de11-9510-001cf0cd104b&#39;);" href="javascript:void(0);">关注我</a>
+    <a id="green_channel_favorite" onclick="AddToWz(cb_entryId);return false;" href="javascript:void(0);">收藏该文</a>
+    <a id="green_channel_weibo" href="javascript:void(0);" title="分享至新浪微博" onclick="ShareToTsina()"><img src="./gdb 多线程调试 - 阿笨猫 - 博客园_files/icon_weibo_24.png" alt=""></a>
+    <a id="green_channel_wechat" href="javascript:void(0);" title="分享至微信" onclick="shareOnWechat()"><img src="./gdb 多线程调试 - 阿笨猫 - 博客园_files/wechat.png" alt=""></a>
+</div>
+<div id="author_profile">
+    <div id="author_profile_info" class="author_profile_info">
+            <a href="http://home.cnblogs.com/u/xuxm2007/" target="_blank"><img src="./gdb 多线程调试 - 阿笨猫 - 博客园_files/u73083.jpg" class="author_avatar" alt=""></a>
+        <div id="author_profile_detail" class="author_profile_info">
+            <a href="http://home.cnblogs.com/u/xuxm2007/">阿笨猫</a><br>
+            <a href="http://home.cnblogs.com/u/xuxm2007/followees">关注 - 24</a><br>
+            <a href="http://home.cnblogs.com/u/xuxm2007/followers">粉丝 - 318</a>
+        </div>
+    </div>
+    <div class="clear"></div>
+    <div id="author_profile_honor"></div>
+    <div id="author_profile_follow">
+                <a href="javascript:void(0);" onclick="follow(&#39;0802bff4-7460-de11-9510-001cf0cd104b&#39;);return false;">+加关注</a>
+    </div>
+</div>
+<div id="div_digg">
+    <div class="diggit" onclick="votePost(2002162,&#39;Digg&#39;)">
+        <span class="diggnum" id="digg_count">3</span>
+    </div>
+    <div class="buryit" onclick="votePost(2002162,&#39;Bury&#39;)">
+        <span class="burynum" id="bury_count">0</span>
+    </div>
+    <div class="clear"></div>
+    <div class="diggword" id="digg_tips">
+    </div>
+</div>
+</div>
+<div class="clear"></div>
+<div id="post_next_prev"><a href="http://www.cnblogs.com/xuxm2007/archive/2011/02/23/1961908.html" class="p_n_p_prefix">« </a> 上一篇：<a href="http://www.cnblogs.com/xuxm2007/archive/2011/02/23/1961908.html" title="发布于2011-02-23 08:58">关于“#ifdef __cplusplus” 和 " extern "C" "</a><br><a href="http://www.cnblogs.com/xuxm2007/archive/2011/04/15/2016735.html" class="p_n_p_prefix">» </a> 下一篇：<a href="http://www.cnblogs.com/xuxm2007/archive/2011/04/15/2016735.html" title="发布于2011-04-15 09:26">Linux下Kill函数用法</a><br></div>
+</div>
+
+
+	<div class="postDesc">posted on <span id="post-date">2011-04-01 14:55</span> <a href="http://www.cnblogs.com/xuxm2007/">阿笨猫</a> 阅读(<span id="post_view_count">62293</span>) 评论(<span id="post_comment_count">4</span>)  <a href="https://i.cnblogs.com/EditPosts.aspx?postid=2002162" rel="nofollow">编辑</a> <a href="http://www.cnblogs.com/xuxm2007/archive/2011/04/01/2002162.html#" onclick="AddToWz(2002162);return false;">收藏</a></div>
+</div>
+<script type="text/javascript">var allowComments=false,cb_blogId=57813,cb_entryId=2002162,cb_blogApp=currentBlogApp,cb_blogUserGuid='0802bff4-7460-de11-9510-001cf0cd104b',cb_entryCreatedDate='2011/4/1 14:55:00';loadViewCount(cb_entryId);</script>
+
+</div><a name="!comments"></a><div id="blog-comments-placeholder"><div id="comments_pager_top"></div>
+<!--done-->
+<br>
+<b>评论:</b>
+<div class="feedbackNoItems"></div>
+	
+
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+			<a href="http://www.cnblogs.com/xuxm2007/archive/2011/04/01/2002162.html#2481524" class="layer">#1楼</a><a name="2481524" id="comment_anchor_2481524"></a>
+				 <span class="comment_date">2012-09-26 10:31</span> | <a id="a_comment_author_2481524" href="http://home.cnblogs.com/u/445781/" target="_blank">richardlxc007</a> <a href="http://msg.cnblogs.com/send/richardlxc007" title="发送站内短消息" class="sendMsg2This">&nbsp;</a><br>
+				<div align="left"><div id="comment_body_2481524" class="blog_comment_body">写的太棒了!</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(2481524,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(2481524,&#39;Bury&#39;,this)">反对(0)</a></div>&nbsp;&nbsp;<span class="comment_actions"></span></div>
+			</div>
+			
+			
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+			<a href="http://www.cnblogs.com/xuxm2007/archive/2011/04/01/2002162.html#2629893" class="layer">#2楼</a><a name="2629893" id="comment_anchor_2629893"></a>
+				 <span class="comment_date">2013-03-07 17:16</span> | <a id="a_comment_author_2629893" href="http://home.cnblogs.com/u/501723/" target="_blank">找bug</a> <a href="http://msg.cnblogs.com/send/%E6%89%BEbug" title="发送站内短消息" class="sendMsg2This">&nbsp;</a><br>
+				<div align="left"><div id="comment_body_2629893" class="blog_comment_body">不错。mark</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(2629893,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(2629893,&#39;Bury&#39;,this)">反对(0)</a></div>&nbsp;&nbsp;<span class="comment_actions"></span></div>
+			</div>
+			
+			
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+			<a href="http://www.cnblogs.com/xuxm2007/archive/2011/04/01/2002162.html#2658874" class="layer">#3楼</a><a name="2658874" id="comment_anchor_2658874"></a>
+				 <span class="comment_date">2013-04-16 15:26</span> | <a id="a_comment_author_2658874" href="http://www.cnblogs.com/westfly/" target="_blank">westfly</a> <a href="http://msg.cnblogs.com/send/westfly" title="发送站内短消息" class="sendMsg2This">&nbsp;</a><br>
+				<div align="left"><div id="comment_body_2658874" class="blog_comment_body">有个问题，如果多线程跑core，单线程没问题，怎么调试？</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(2658874,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(2658874,&#39;Bury&#39;,this)">反对(0)</a></div>&nbsp;&nbsp;<span class="comment_actions"></span></div>
+			</div>
+			
+			
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+			<a href="http://www.cnblogs.com/xuxm2007/archive/2011/04/01/2002162.html#2660955" class="layer">#4楼</a><a name="2660955" id="comment_anchor_2660955"></a>[<span class="louzhu">楼主</span>]<span id="comment-maxId" style="display:none;">2660955</span><span id="comment-maxDate" style="display:none;">2013/4/18 17:36:18</span>
+				 <span class="comment_date">2013-04-18 17:36</span> | <a id="a_comment_author_2660955" href="http://www.cnblogs.com/xuxm2007/" target="_blank">阿笨猫</a> <a href="http://msg.cnblogs.com/send/%E9%98%BF%E7%AC%A8%E7%8C%AB" title="发送站内短消息" class="sendMsg2This">&nbsp;</a><br>
+				<div align="left"><div id="comment_body_2660955" class="blog_comment_body"><a href="http://www.cnblogs.com/xuxm2007/archive/2011/04/01/2002162.html#2658874" title="查看所回复的评论" onclick="commentManager.renderComments(0,50,2658874);">@</a>
+westfly<br>用Valgrind检查试试,查查内存,查查线程错误.</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(2660955,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(2660955,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_2660955_avatar" style="display:none;">http://pic.cnblogs.com/face/u73083.jpg?id=15193222</span>&nbsp;&nbsp;<span class="comment_actions"></span></div>
+			</div>
+			
+			
+		</div>
+	
+
+
+
+<div id="comments_pager_bottom"></div></div><script type="text/javascript">var commentManager = new blogCommentManager();commentManager.renderComments(0);</script>
+<div id="comment_form" class="commentform">
+<a name="commentform"></a>
+<div id="divCommentShow"></div>
+<div id="comment_nav"><span id="span_refresh_tips"></span><a href="javascript:void(0);" onclick="return RefreshCommentList();" id="lnk_RefreshComments" runat="server" clientidmode="Static">刷新评论</a><a href="http://www.cnblogs.com/xuxm2007/archive/2011/04/01/2002162.html#" onclick="return RefreshPage();">刷新页面</a><a href="http://www.cnblogs.com/xuxm2007/archive/2011/04/01/2002162.html#top">返回顶部</a></div>
+<div id="comment_form_container">（评论功能已被禁用）</div>
+<div class="ad_text_commentbox" id="ad_text_under_commentbox"></div>
+<div id="ad_t2"><a href="http://www.ucancode.com/index.htm" target="_blank">【推荐】50万行VC++源码: 大型组态工控、电力仿真CAD与GIS源码库</a><br><a href="https://group.cnblogs.com/topic/76464.html" target="_blank">【免费】自开发零实施的H3 BPM免费下载</a><br><a href="http://cn.udacity.com/fend/?utm_source=cnblogs&amp;utm_medium=referral&amp;utm_campaign=newFEND" target="_blank">【推荐】Google+GitHub联手打造前端工程师课程</a><br><a href="https://activity.ksyun.com/1701/index.html?ch=00033.00005.0011701&amp;hmsr=cnblogs&amp;hmpl=1701&amp;hmcu=&amp;hmkw=&amp;hmci=" target="_blank">【云上】在金山大米云，让云计算更简单</a><br><a href="http://click.aliyun.com/m/13679/" target="_blank">【推荐】阿里云香港云服务器65折，免备案</a><br></div>
+<div id="opt_under_post"></div>
+<div id="ad_c1" class="c_ad_block">     <ins class="adsbygoogle" style="display: inline-block; width: 300px; height: 250px;" data-ad-client="ca-pub-4210569241504288" data-ad-slot="5457903683" data-adsbygoogle-status="done"><ins id="aswift_0_expand" style="display:inline-table;border:none;height:250px;margin:0;padding:0;position:relative;visibility:visible;width:300px;background-color:transparent"><ins id="aswift_0_anchor" style="display:block;border:none;height:250px;margin:0;padding:0;position:relative;visibility:visible;width:300px;background-color:transparent"><iframe width="300" height="250" frameborder="0" marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true" scrolling="no" allowfullscreen="true" onload="var i=this.id,s=window.google_iframe_oncopy,H=s&amp;&amp;s.handlers,h=H&amp;&amp;H[i],w=this.contentWindow,d;try{d=w.document}catch(e){}if(h&amp;&amp;d&amp;&amp;(!d.body||!d.body.firstChild)){if(h.call){setTimeout(h,0)}else if(h.match){try{h=s.upd(h,i)}catch(e){}w.location.replace(h)}}" id="aswift_0" name="aswift_0" style="left:0;position:absolute;top:0;"></iframe></ins></ins></ins></div>
+<div id="under_post_news"><div class="itnews c_ad_block"><b>最新IT新闻</b>:<br> ·  <a href="http://news.cnblogs.com/n/565137/" target="_blank">Airbnb去年清掉923处不合规定的房源</a><br> ·  <a href="http://news.cnblogs.com/n/565136/" target="_blank">谷歌开源“Guetzli”JPEG图像编码器：提升压缩比、网页加载更顺滑</a><br> ·  <a href="http://news.cnblogs.com/n/565135/" target="_blank">万宝龙推出首款Android Wear智能手表</a><br> ·  <a href="http://news.cnblogs.com/n/565134/" target="_blank">Apple Music大使计划 推特推广可免费获得3个月会员</a><br> ·  <a href="http://news.cnblogs.com/n/565133/" target="_blank">Windows 10 Build 15060发布：本周的第三个版本更新</a><br>» <a href="http://news.cnblogs.com/" title="IT新闻" target="_blank">更多新闻...</a></div></div>
+<div id="ad_c2" class="c_ad_block"><a href="http://bbs.h3bpm.com/index.php?m=app&amp;app=product_download&amp;a=reg&amp;utm_source=csdn&amp;utm_medium=pic&amp;utm_campaign=show&amp;utm_content=v10&amp;utm_term=%E5%85%8D%E8%B4%B9%E4%B8%8B%E8%BD%BD" target="_blank"><img width="468" height="60" src="./gdb 多线程调试 - 阿笨猫 - 博客园_files/24442-20170118152220281-363324784.jpg" alt=""></a></div>
+<div id="under_post_kb"><div class="itnews c_ad_block" id="kb_block"><b>最新知识库文章</b>:<br><div id="kb_recent"> ·  <a href="http://kb.cnblogs.com/page/559403/" target="_blank">为什么我要写自己的框架？</a><br> ·  <a href="http://kb.cnblogs.com/page/562433/" target="_blank">垃圾回收原来是这么回事</a><br> ·  <a href="http://kb.cnblogs.com/page/554260/" target="_blank">「代码家」的学习过程和学习经验分享</a><br> ·  <a href="http://kb.cnblogs.com/page/556770/" target="_blank">写给未来的程序媛</a><br> ·  <a href="http://kb.cnblogs.com/page/558087/" target="_blank">高质量的工程代码为什么难写</a><br></div>» <a href="http://kb.cnblogs.com/" target="_blank">更多知识库文章...</a></div></div>
+<div id="HistoryToday" class="c_ad_block"></div>
+<script type="text/javascript">
+    fixPostBody();
+    setTimeout(function () { incrementViewCount(cb_entryId); }, 50);
+    deliverAdT2();
+    deliverAdC1();
+    deliverAdC2();    
+    loadNewsAndKb();
+    loadBlogSignature();
+    LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+    GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate);
+    loadOptUnderPost();
+    GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);   
+</script>
+</div>
+
+
+</div>
+<div id="leftcontent">
+	
+		<div id="leftcontentcontainer">
+			
+<!--done-->
+<div class="newsItem">
+	<div id="blog-news"><div id="profile_block">昵称：<a href="http://home.cnblogs.com/u/xuxm2007/">阿笨猫</a><br>园龄：<a href="http://home.cnblogs.com/u/xuxm2007/" title="入园时间：2009-06-24">7年8个月</a><br>粉丝：<a href="http://home.cnblogs.com/u/xuxm2007/followers/">318</a><br>关注：<a href="http://home.cnblogs.com/u/xuxm2007/followees/">24</a><div id="p_b_follow"><a href="javascript:void(0);" onclick="follow(&#39;0802bff4-7460-de11-9510-001cf0cd104b&#39;)">+加关注</a></div></div></div><script type="text/javascript">loadBlogNews();</script>
+</div>
+
+			<div id="blog-calendar" style="display:none"></div><script type="text/javascript">loadBlogDefaultCalendar();</script><br>
+			<div id="blog-sidecolumn"><div id="sidebar_search" class="sidebar-block">
+<div id="sidebar_search" class="mySearch">
+<h3 class="catListTitle">搜索</h3>
+<div id="sidebar_search_box">
+<div id="widget_my_zzk" class="div_my_zzk"><input type="text" id="q" onkeydown="return zzk_go_enter(event);" class="input_my_zzk">&nbsp;<input onclick="zzk_go()" type="button" value="找找看" id="btnZzk" class="btn_my_zzk"></div>
+<div id="widget_my_google" class="div_my_zzk"><input type="text" name="google_q" id="google_q" onkeydown="return google_go_enter(event)" class="input_my_zzk">&nbsp;<input onclick="google_go()" type="button" value="谷歌搜索" class="btn_my_zzk"></div>
+</div>
+</div>
+
+</div><div id="sidebar_categories">
+		<h3 class="catListTitle">随笔分类<span style="font-size:11px;font-weight:normal">(215)</span></h3>
+		
+				<ul class="catList">
+			
+				<li class="catListItem"> <a id="CatList_LinkList_0_Link_0" class="listitem" href="http://www.cnblogs.com/xuxm2007/category/217480.html">C/C++(34)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_0_Link_1" class="listitem" href="http://www.cnblogs.com/xuxm2007/category/306904.html">hadoop(28)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_0_Link_2" class="listitem" href="http://www.cnblogs.com/xuxm2007/category/388607.html">hadoop原码阅读(24)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_0_Link_3" class="listitem" href="http://www.cnblogs.com/xuxm2007/category/311401.html">java(9)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_0_Link_4" class="listitem" href="http://www.cnblogs.com/xuxm2007/category/254753.html">Linux(77)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_0_Link_5" class="listitem" href="http://www.cnblogs.com/xuxm2007/category/337937.html">redis(6)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_0_Link_6" class="listitem" href="http://www.cnblogs.com/xuxm2007/category/338199.html">常用工具(19)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_0_Link_7" class="listitem" href="http://www.cnblogs.com/xuxm2007/category/338191.html">分布式(5)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_0_Link_8" class="listitem" href="http://www.cnblogs.com/xuxm2007/category/217482.html">脚本语言(11)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_0_Link_9" class="listitem" href="http://www.cnblogs.com/xuxm2007/category/256947.html">搜索引擎(2)</a></li>
+			
+				</ul>
+			
+	
+		<h3 class="catListTitle">随笔档案<span style="font-size:11px;font-weight:normal">(238)</span></h3>
+		
+				<ul class="catList">
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_0" class="listitem" href="http://www.cnblogs.com/xuxm2007/archive/2017/03.html">2017年3月 (3)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_1" class="listitem" href="http://www.cnblogs.com/xuxm2007/archive/2016/09.html">2016年9月 (2)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_2" class="listitem" href="http://www.cnblogs.com/xuxm2007/archive/2016/08.html">2016年8月 (1)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_3" class="listitem" href="http://www.cnblogs.com/xuxm2007/archive/2016/07.html">2016年7月 (1)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_4" class="listitem" href="http://www.cnblogs.com/xuxm2007/archive/2016/06.html">2016年6月 (3)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_5" class="listitem" href="http://www.cnblogs.com/xuxm2007/archive/2016/05.html">2016年5月 (1)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_6" class="listitem" href="http://www.cnblogs.com/xuxm2007/archive/2016/04.html">2016年4月 (1)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_7" class="listitem" href="http://www.cnblogs.com/xuxm2007/archive/2016/02.html">2016年2月 (1)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_8" class="listitem" href="http://www.cnblogs.com/xuxm2007/archive/2015/09.html">2015年9月 (3)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_9" class="listitem" href="http://www.cnblogs.com/xuxm2007/archive/2015/07.html">2015年7月 (4)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_10" class="listitem" href="http://www.cnblogs.com/xuxm2007/archive/2015/05.html">2015年5月 (1)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_11" class="listitem" href="http://www.cnblogs.com/xuxm2007/archive/2015/04.html">2015年4月 (2)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_12" class="listitem" href="http://www.cnblogs.com/xuxm2007/archive/2015/03.html">2015年3月 (2)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_13" class="listitem" href="http://www.cnblogs.com/xuxm2007/archive/2015/02.html">2015年2月 (1)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_14" class="listitem" href="http://www.cnblogs.com/xuxm2007/archive/2015/01.html">2015年1月 (2)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_15" class="listitem" href="http://www.cnblogs.com/xuxm2007/archive/2014/12.html">2014年12月 (2)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_16" class="listitem" href="http://www.cnblogs.com/xuxm2007/archive/2014/11.html">2014年11月 (1)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_17" class="listitem" href="http://www.cnblogs.com/xuxm2007/archive/2014/07.html">2014年7月 (2)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_18" class="listitem" href="http://www.cnblogs.com/xuxm2007/archive/2014/06.html">2014年6月 (2)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_19" class="listitem" href="http://www.cnblogs.com/xuxm2007/archive/2014/05.html">2014年5月 (2)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_20" class="listitem" href="http://www.cnblogs.com/xuxm2007/archive/2014/01.html">2014年1月 (1)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_21" class="listitem" href="http://www.cnblogs.com/xuxm2007/archive/2013/09.html">2013年9月 (2)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_22" class="listitem" href="http://www.cnblogs.com/xuxm2007/archive/2013/08.html">2013年8月 (4)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_23" class="listitem" href="http://www.cnblogs.com/xuxm2007/archive/2013/07.html">2013年7月 (1)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_24" class="listitem" href="http://www.cnblogs.com/xuxm2007/archive/2013/06.html">2013年6月 (3)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_25" class="listitem" href="http://www.cnblogs.com/xuxm2007/archive/2013/04.html">2013年4月 (2)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_26" class="listitem" href="http://www.cnblogs.com/xuxm2007/archive/2013/02.html">2013年2月 (5)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_27" class="listitem" href="http://www.cnblogs.com/xuxm2007/archive/2013/01.html">2013年1月 (2)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_28" class="listitem" href="http://www.cnblogs.com/xuxm2007/archive/2012/11.html">2012年11月 (1)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_29" class="listitem" href="http://www.cnblogs.com/xuxm2007/archive/2012/10.html">2012年10月 (1)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_30" class="listitem" href="http://www.cnblogs.com/xuxm2007/archive/2012/09.html">2012年9月 (2)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_31" class="listitem" href="http://www.cnblogs.com/xuxm2007/archive/2012/07.html">2012年7月 (9)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_32" class="listitem" href="http://www.cnblogs.com/xuxm2007/archive/2012/06.html">2012年6月 (16)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_33" class="listitem" href="http://www.cnblogs.com/xuxm2007/archive/2012/05.html">2012年5月 (4)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_34" class="listitem" href="http://www.cnblogs.com/xuxm2007/archive/2012/04.html">2012年4月 (3)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_35" class="listitem" href="http://www.cnblogs.com/xuxm2007/archive/2012/03.html">2012年3月 (1)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_36" class="listitem" href="http://www.cnblogs.com/xuxm2007/archive/2012/02.html">2012年2月 (5)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_37" class="listitem" href="http://www.cnblogs.com/xuxm2007/archive/2012/01.html">2012年1月 (5)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_38" class="listitem" href="http://www.cnblogs.com/xuxm2007/archive/2011/12.html">2011年12月 (7)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_39" class="listitem" href="http://www.cnblogs.com/xuxm2007/archive/2011/11.html">2011年11月 (11)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_40" class="listitem" href="http://www.cnblogs.com/xuxm2007/archive/2011/10.html">2011年10月 (7)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_41" class="listitem" href="http://www.cnblogs.com/xuxm2007/archive/2011/09.html">2011年9月 (20)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_42" class="listitem" href="http://www.cnblogs.com/xuxm2007/archive/2011/08.html">2011年8月 (16)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_43" class="listitem" href="http://www.cnblogs.com/xuxm2007/archive/2011/07.html">2011年7月 (6)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_44" class="listitem" href="http://www.cnblogs.com/xuxm2007/archive/2011/06.html">2011年6月 (10)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_45" class="listitem" href="http://www.cnblogs.com/xuxm2007/archive/2011/05.html">2011年5月 (4)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_46" class="listitem" href="http://www.cnblogs.com/xuxm2007/archive/2011/04.html">2011年4月 (3)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_47" class="listitem" href="http://www.cnblogs.com/xuxm2007/archive/2011/03.html">2011年3月 (1)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_48" class="listitem" href="http://www.cnblogs.com/xuxm2007/archive/2011/02.html">2011年2月 (1)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_49" class="listitem" href="http://www.cnblogs.com/xuxm2007/archive/2011/01.html">2011年1月 (7)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_50" class="listitem" href="http://www.cnblogs.com/xuxm2007/archive/2010/12.html">2010年12月 (9)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_51" class="listitem" href="http://www.cnblogs.com/xuxm2007/archive/2010/11.html">2010年11月 (8)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_52" class="listitem" href="http://www.cnblogs.com/xuxm2007/archive/2010/10.html">2010年10月 (8)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_53" class="listitem" href="http://www.cnblogs.com/xuxm2007/archive/2010/09.html">2010年9月 (7)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_54" class="listitem" href="http://www.cnblogs.com/xuxm2007/archive/2010/08.html">2010年8月 (5)</a></li>
+			
+				<li class="catListItem"> <a id="CatList_LinkList_1_Link_55" class="listitem" href="http://www.cnblogs.com/xuxm2007/archive/2010/07.html">2010年7月 (4)</a></li>
+			
+				</ul>
+			
+	
+</div></div><script type="text/javascript">loadBlogSideColumn();</script></div>
+	
+</div>
+
+<!--done-->
+<div class="footer">
+	Powered by: <a href="http://www.cnblogs.com/">博客园</a>	模板提供：<a href="http://blog.hjenglish.com/">沪江博客</a>
+	Copyright ©2017 阿笨猫
+</div>
+
+
+
+
+
+</body></html>
