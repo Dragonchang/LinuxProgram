@@ -87,7 +87,13 @@ arch/x86/boot/main.c:main()
 		   |		|_________initmem_init()
 		   |		|
 		   |		|_________paging_init()
-                   |
+　　　　　　　　　　　　　　　　　　　|                            |　　　　　　　　　　　　　　　　　　
+                   |                            |______________________sparse_memory_present_with_active_regions
+                   |                            |
+                   |                            |______________________sparse_init
+                   |                            |
+                   |                            |______________________zone_sizes_init
+                   |                              
                    |_________mm_init()
 
 
