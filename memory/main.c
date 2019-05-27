@@ -4,14 +4,7 @@
 #include <unistd.h>
 #include <pthread.h>
 #include <sys/mman.h>
-class test {
-
-private:
-     int a;
-     char c;
-
-
-};
+http://royluo.org/2014/06/15/kvm-install-1/
 void *read_thread(void *dummy)
 {
         //sleep(100000); 

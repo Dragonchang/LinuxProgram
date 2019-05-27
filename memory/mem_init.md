@@ -66,27 +66,27 @@ arch/x86/boot/main.c:main()
          --->init/main.c:start_kernel()
                    |
                    |_________setup_arch(&command_line)
-		   |		|
-		   |		|_________setup_memory_map()_________x86_init.resources.memory_setup()_________default_machine_specific_memory_setup (boot_params.e820_map---->e820)
-		   |		|                                                                                          |
-		   |		|                                                                                          |____________append_e820_map
-		   |	        |                                                                                          |
-		   |		|                                                                                          |____________e820_add_region
-		   |		|
-		   |		|
-		   |		|_________e820_end_of_ram_pfn()_________e820_end_pfn 使用e820计算出可用物理内存的页数
-		   |		| 
-		   |		|_________init_memory_mapping(）建立内核映射页表
-		   |		|                 |
-		   |		|                 |_________save_mr
-		   |		|                 |
-		   |		|                 |_________kernel_physical_mapping_init
-		   |		| 
-		   |		|_________init_memory_mapping()_________
-		   |		| 
-		   |		|_________initmem_init()
-		   |		|
-		   |		|_________paging_init()
+		           |		|
+		           |		|_________setup_memory_map()_________x86_init.resources.memory_setup()_________default_machine_specific_memory_setup (boot_params.e820_map---->e820)
+		           |		|                                                                                          |
+		           |		|                                                                                          |____________append_e820_map
+		           |	    |                                                                                          |
+		           |		|                                                                                          |____________e820_add_region
+		           |		|
+		           |		|
+		           |		|_________e820_end_of_ram_pfn()_________e820_end_pfn 使用e820计算出可用物理内存的页数
+		           |		| 
+		           |		|_________init_memory_mapping(）建立内核映射页表
+		           |		|                 |
+		           |		|                 |_________save_mr
+		           |		|                 |
+		           |		|                 |_________kernel_physical_mapping_init
+		           |		| 
+		           |		|_________init_memory_mapping()_________
+		           |		| 
+		           |		|_________initmem_init()
+		           |		|
+		           |		|_________paging_init()
 　　　　　　　　　　　　　　　　　　　|                            |　　　　　　　　　　　　　　　　　　
                    |                            |______________________sparse_memory_present_with_active_regions
                    |                            |
